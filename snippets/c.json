@@ -1,0 +1,22 @@
+{
+  "Starter Template": {
+    "prefix": "st",
+    "body": [
+      "#include <stdlib.h>",
+      "#include <stdio.h>",
+      "",
+      "int main(int argc, char *argv[])",
+      "{",
+      "\t$0",
+      "\treturn EXIT_SUCCESS;",
+      "}"
+    ],
+    "description": "Standard starter template for a tiny C program"
+  },
+  "stdio": {
+    "prefix": "stdio",
+    "body": [
+      "#include <stdio.h>"
+    ]
+  }
+}

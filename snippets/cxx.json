@@ -1,0 +1,17 @@
+{
+  "io": {
+    "prefix": "io",
+    "body": [
+      "#include <iostream>"
+    ]
+  },
+  "once": {
+    "prefix": "once",
+    "body": [
+      "#ifndef _${1:NAME}_H",
+      "#define _${1:NAME}_H",
+      "${2}",
+      "#endif"
+    ]
+  }
+}
