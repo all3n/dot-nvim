@@ -62,7 +62,9 @@ end
 if _G.all3nvim.env == nil then
   _G.all3nvim.env = getCurrentEnvironment(python.envs[def_env])
 end
-_G.all3nvim.exec_env = "PYTHON=" .. _G.all3nvim.python.bin
+if _G.all3nvim.python.bin ~= nil then
+  _G.all3nvim.exec_env = "PYTHON=" .. _G.all3nvim.python.bin
+end
 
 require("dap-python").setup("python", {})
 table.insert(dap.configurations.python, {

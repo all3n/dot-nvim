@@ -41,3 +41,12 @@ git clone https://github.com/all3n/dot-nvim.git ~/.config/nvim
 
 ## LuaSnip
 1. snippets dir
+
+
+
+## Ubuntu set java dev
+```
+cp ~/.config/nvim/configs/config-ubuntu.template.json ~/.config/nvim/config.json
+bash ~/.config/nvim/bin/setup.sh
+sudo apt-get install openjdk-17-jdk
+```

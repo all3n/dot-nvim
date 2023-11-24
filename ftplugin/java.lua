@@ -21,9 +21,9 @@ end
 local utils_tool = require("utils")
 local jdtls_data = vim.fn.stdpath("data") .. "/jdtls"
 utils_tool.create_directory_if_not_exists(jdtls_data)
-local lombak_jar = jdtls_data .. "/lombak.jar"
-local lombak_url = "https://projectlombok.org/downloads/lombok.jar"
-utils_tool.download_file(lombak_url, lombak_jar)
+local lombok_jar = jdtls_data .. "/lombok.jar"
+local lombok_url = "https://projectlombok.org/downloads/lombok.jar"
+utils_tool.download_file(lombok_url, lombok_jar)
 
 
 local env = {
@@ -127,7 +127,7 @@ local config = {
     '--add-modules=ALL-SYSTEM',
     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
-    '-javaagent:' .. lombak_jar,
+    '-javaagent:' .. lombok_jar,
     '-jar', vim.fn.glob(util.path.join(jdtls_home, '/plugins/org.eclipse.equinox.launcher_*.jar'), 1),
     '-configuration', util.path.join(jdtls_home, get_os_config()),
     '-data', get_jdtls_workspace_dir(),

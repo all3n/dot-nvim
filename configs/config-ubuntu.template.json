@@ -1,0 +1,34 @@
+{
+  "plugins": {
+    "tabnine": true
+  },
+  "mason": {
+    "install": [
+      "clangd",
+      "pyright",
+      "json-lsp",
+      "lua-language-server",
+      "clang-format",
+      "bash-language-server",
+      "yaml-language-server",
+      "marksman"
+    ]
+  },
+  "python": {
+    "envs": {
+      "conda": "~/anaconda3/bin/python",
+      "sys": "/usr/bin/python3"
+    },
+    "default" : "conda"
+  },
+  "java": {
+    "envs": {
+      "JavaSE-17": "/usr/lib/jvm/java-17-openjdk-amd64"
+    },
+    "default": "JavaSE-17",
+    "lsp": {
+      "jdtls_home": "~/opt/jdtls-1.29.0",
+      "jdtls_env": "JavaSE-17"
+    }
+  }
+}

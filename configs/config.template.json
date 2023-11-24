@@ -1,5 +1,8 @@
 {
   "plugins" : {
     "tabnine" : true
+  },
+  "mason": {
+    "install" : ["clangd", "pyright", "json-lsp", "lua-language-server", "clang-format", "bash-language-server", "yaml-language-server"]
   }
 }

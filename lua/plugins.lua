@@ -114,7 +114,10 @@ require("lazy").setup({
     end,
     event = { "InsertEnter", "CmdlineEnter" }
   },
-  { "williamboman/mason.nvim",           config = true },
+  { "williamboman/mason.nvim",           config = function()
+    require("plugins.plugin_mason").setup()
+
+  end},
   { "williamboman/mason-lspconfig.nvim", config = true },
   { "lewis6991/gitsigns.nvim",           config = true },
   {

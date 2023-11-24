@@ -3,7 +3,8 @@ _G.all3nvim = {
   plugins = {
     tabnine = false
   },
-  change_env = nil
+  change_env = nil,
+  exec_env = ""
 }
 local utils = require("utils")
 local config_json = vim.fn.stdpath("config") .. "/config.json"
