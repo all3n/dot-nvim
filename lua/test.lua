@@ -1,6 +1,5 @@
 local M = {}
 
-
 function M.input()
   vim.ui.input({
     prompt = "test",

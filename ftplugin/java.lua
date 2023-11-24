@@ -1,4 +1,18 @@
 local util = require 'lspconfig.util'
+local java = _G.all3nvim.java
+local java_envs = java.envs
+local java_runtimes = {}
+for k, v in pairs(java_envs) do
+  java_envs[k] = vim.api.nvim_call_function("expand", { v })
+  -- jdtls runtime not support 21
+  if k ~= "JavaSE-21" then
+    table.insert(java_runtimes, { name = k, path = java_envs[k] })
+  end
+end
+if java.lsp.jdtls_home ~= nil then
+  java.lsp.jdtls_home = vim.api.nvim_call_function("expand", { java.lsp.jdtls_home })
+end
+
 -- you should download jdtls first,un archive to ~/opt/jdtls-x.x.x
 -- set JDTLS_HOME=$HOME/opt/jdtls-x.x.x
 -- JDTLS_JAVA must > java17
@@ -77,13 +91,16 @@ end
 local java_bin = nil
 if env.JDTLS_JAVA then
   java_bin = env.JDTLS_JAVA
+elseif java.lsp.jdtls_env ~= nil then
+  local lsp_env_name = java.lsp.jdtls_env
+  java_bin = util.path.join(java_envs[lsp_env_name], '/bin/java')
 else
   java_bin = util.path.join(env.JAVA_HOME, '/bin/java')
 end
-local java_debug_path = util.path.join(env.JAVA_DEBUG,
-  'com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar')
--- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/server_configurations/jdtls.lua
+_G.all3nvim.env = java_bin
+local java_debug_path = util.path.join(env.JAVA_DEBUG, 'com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar')
 
+-- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/server_configurations/jdtls.lua
 local function get_jdtls_jvm_args()
   local args = {}
   for a in string.gmatch((env.JDTLS_JVM_ARGS or ''), '%S+') do
@@ -91,6 +108,10 @@ local function get_jdtls_jvm_args()
     table.insert(args, arg)
   end
   return unpack(args)
+end
+local jdtls_home = env.JDTLS_HOME
+if jdtls_home == nil then
+  jdtls_home = java.lsp.jdtls_home
 end
 
 -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
@@ -107,8 +128,8 @@ local config = {
     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
     '-javaagent:' .. lombak_jar,
-    '-jar', vim.fn.glob(util.path.join(env.JDTLS_HOME, '/plugins/org.eclipse.equinox.launcher_*.jar'), 1),
-    '-configuration', util.path.join(env.JDTLS_HOME, get_os_config()),
+    '-jar', vim.fn.glob(util.path.join(jdtls_home, '/plugins/org.eclipse.equinox.launcher_*.jar'), 1),
+    '-configuration', util.path.join(jdtls_home, get_os_config()),
     '-data', get_jdtls_workspace_dir(),
     get_jdtls_jvm_args()
   },
@@ -134,17 +155,13 @@ local config = {
       format = {
         enabled = true,
         settings = {
-          url = vim.fn.stdpath "config" .. "/configs/intellij-java-google-style.xml",
+          url = "file://" .. vim.fn.stdpath("config").. "/configs/eclipse-java-google-style.xml",
           profile = "GoogleStyle",
         },
       },
       configuration = {
         updateBuildConfiguration = "interactive",
-        runtimes = {
-          { name = "JavaSE-1.8", path = env.JDK8_HOME },
-          { name = "JavaSE-13",  path = env.JDK13_HOME },
-          { name = "JavaSE-17",  path = env.JDK17_HOME }
-        }
+        runtimes = java_runtimes
       }
     }
   },
@@ -173,7 +190,6 @@ config['on_attach'] = function(client, bufnr)
   -- Remove the option if you do not want that.
   -- You can use the `JdtHotcodeReplace` command to trigger it manually
   -- require('jdtls').setup_dap({ hotcodereplace = 'auto' })
-  require('jdtls.setup').add_commands()
 end
 vim.cmd([[
   nnoremap <A-o> <Cmd>lua require'jdtls'.organize_imports()<CR>

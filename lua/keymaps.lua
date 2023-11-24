@@ -11,6 +11,7 @@ keymap("n", "<C-h>", "<C-w>h", opts)
 keymap("n", "<C-j>", "<C-w>j", opts)
 keymap("n", "<C-k>", "<C-w>k", opts)
 keymap("n", "<C-l>", "<C-w>l", opts)
+keymap("n", "<C-S-p>", "<cmd>Telescope commands<cr>", opts )
 
 vim.keymap.set("n", "[c", function()
   require("treesitter-context").go_to_context()

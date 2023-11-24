@@ -16,6 +16,14 @@ M.defaults = {
     fn = function()
       require("plugins.plugin_bufferline").buf_kill "bd"
     end,
+  },
+  {
+    name = "ChangeEnv",
+    fn = function()
+      if _G.all3nvim.change_env ~= nil and _G.all3nvim.envs ~= nil then
+        _G.all3nvim.change_env(_G.all3nvim.envs)
+      end
+    end
   }
 }
 

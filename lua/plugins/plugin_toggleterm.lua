@@ -3,10 +3,28 @@ local M = {}
 M.direction = "horizontal"
 M.size = 0.3
 
+local python_cmd = function()
+  if _G.all3nvim.python and _G.all3nvim.python.bin then
+    return _G.all3nvim.python.bin
+  else
+    return "python"
+  end
+end
+M.term_id_map = {}
+M.last_id = nil
 M.execs = {
-  { nil, "<C-T>", "Horizontal Terminal", "horizontal", 0.3 },
-  { nil, "<C-\\>", "Float Terminal",      "float",      nil },
+  { nil,        "<C-T>",  "Horizontal Terminal", "horizontal", 0.3 },
+  { nil,        "<C-\\>", "Float Terminal",      "float",      nil },
+  { python_cmd, "<C-p>",  "Python",              "horizontal", 0.3 },
 }
+local get_next_id = function()
+  if M.last_id == nil then
+    M.last_id = 1
+  else
+    M.last_id = M.last_id + 1
+  end
+  return M.last_id
+end
 
 local function get_buf_size()
   local cbuf = vim.api.nvim_get_current_buf()
@@ -31,14 +49,24 @@ local function get_dynamic_terminal_size(direction, size)
 end
 
 M.add_exec = function(opts)
-  local binary = opts.cmd:match "(%S+)"
-  if vim.fn.executable(binary) ~= 1 then
-    Log:debug("Skipping configuring executable " .. binary .. ". Please make sure it is installed properly.")
-    return
-  end
+  -- local binary = opts.cmd:match "(%S+)"
+  -- if vim.fn.executable(binary) ~= 1 then
+  --   Log:debug("Skipping configuring executable " .. binary .. ". Please make sure it is installed properly.")
+  --   return
+  -- end
 
   vim.keymap.set({ "n", "t" }, opts.keymap, function()
-    M._exec_toggle { cmd = opts.cmd, count = opts.count, direction = opts.direction, size = opts.size() }
+    local real_cmd = opts.cmd
+    if type(opts.cmd) == "function" then
+      real_cmd = opts.cmd()
+    end
+    local term_count = opts.count
+    if M.term_id_map[real_cmd] == nil then
+      M.last_id = M.last_id + 1
+      M.term_id_map[real_cmd] = M.last_id
+    end
+    -- vim.notify(real_cmd)
+    M._exec_toggle { cmd = real_cmd, count = M.last_id, direction = opts.direction, size = opts.size() }
   end, { desc = opts.label, noremap = true, silent = true })
 end
 
@@ -62,8 +90,6 @@ M.setup = function()
     open_mapping = [[<c-\>]],
     direction = 'float',
   })
-
-
   for i, exec in pairs(M.execs) do
     local direction = exec[4] or M.direction
     local opts = {
@@ -77,10 +103,22 @@ M.setup = function()
         return get_dynamic_terminal_size(direction, exec[5])
       end,
     }
+    if opts.cmd ~= vim.o.shell then
+      M.last_id = opts.count
+      M.term_id_map[opts.cmd] = M.last_id
+    end
     M.add_exec(opts)
   end
 end
 
+M.get_cmd_idx = function(cmd)
+  if M.term_id_map[cmd] ~= nil then
+    return M.term_id_map[cmd]
+  else
+    M.term_id_map[cmd] = get_next_id()
+    return M.term_id_map[cmd]
+  end
+end
 
 M.lazygit_toggle = function()
   local Terminal = require("toggleterm.terminal").Terminal
@@ -97,9 +135,33 @@ M.lazygit_toggle = function()
       vim.cmd "startinsert!"
     end,
     on_close = function(_) end,
-    count = 99,
+    count = M.get_cmd_idx("lazygit"),
   }
   lazygit:toggle()
 end
+
+M.cmd_toggle = function(cmd)
+  local Terminal = require("toggleterm.terminal").Terminal
+  local term_cmd = Terminal:new {
+    cmd = cmd,
+    hidden = true,
+    direction = "float",
+    float_opts = {
+      border = "none",
+      width = 100000,
+      height = 100000,
+    },
+    on_open = function(_)
+      vim.cmd "startinsert!"
+    end,
+    on_close = function(_) end,
+    count = M.get_cmd_idx(cmd),
+  }
+  term_cmd:toggle()
+end
+
+
+
+
 
 return M

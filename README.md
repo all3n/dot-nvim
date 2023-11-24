@@ -1,4 +1,8 @@
 # All3n NeoVim Configs
+## Install
+```
+git clone https://github.com/all3n/dot-nvim.git ~/.config/nvim
+```
 ## global 
 1. leader -> space
 

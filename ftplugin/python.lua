@@ -1,4 +1,69 @@
+local utils = require("utils")
+local ui_widgets = require("ui_widgets")
 local dap = require('dap')
+local python = _G.all3nvim.python
+local def_env = python.default
+
+for k, v in pairs(python.envs) do
+  python.envs[k] = vim.api.nvim_call_function("expand", { v })
+end
+
+python.bin = nil
+local envs = {}
+
+local function getCurrentEnvironment(env_python_bin)
+  local pythonBin = env_python_bin or utils.execute_command("which python")
+  local python_version = nil
+  if pythonBin == nil or pythonBin == "" then
+    pythonBin = utils.execute_command("which python3")
+  end
+  if pythonBin ~= nil then
+    python_version = utils.execute_command(pythonBin .. " --version")
+  end
+  _G.all3nvim.python.bin = pythonBin
+  vim.g.python3_host_prog = pythonBin
+  local icons = require "nvim-web-devicons"
+  local py_icon, _ = icons.get_icon ".py"
+  local environmentName = nil
+  if pythonBin == nil or pythonBin == "" then
+    environmentName = nil
+  elseif string.match(pythonBin, "conda") then
+    local condaEnv = os.getenv("CONDA_DEFAULT_ENV")
+    environmentName = "conda[" .. condaEnv .. "]"
+  elseif string.match(pythonBin, "venv") then
+    environmentName = "venv" .. os.getenv("VIRTUAL_ENV_PROMPT")
+  else
+    environmentName = pythonBin
+  end
+  if environmentName == nil then
+    return "-"
+  else
+    return py_icon .. environmentName .. ":" .. python_version
+  end
+end
+
+
+if python.envs ~= nil then
+  for _, env in pairs(python.envs) do
+    table.insert(envs, env)
+  end
+  local change_env = function(envs_)
+    local picker_fn = ui_widgets.build_picker("change python environment", envs_, function(c)
+      local env_python_bin = c
+      _G.all3nvim.env = getCurrentEnvironment(env_python_bin)
+      _G.all3nvim.exec_env = "PYTHON=" .. _G.all3nvim.python.bin
+    end)
+    picker_fn()
+  end
+  utils.register_envs(envs, change_env)
+end
+
+
+if _G.all3nvim.env == nil then
+  _G.all3nvim.env = getCurrentEnvironment(python.envs[def_env])
+end
+_G.all3nvim.exec_env = "PYTHON=" .. _G.all3nvim.python.bin
+
 require("dap-python").setup("python", {})
 table.insert(dap.configurations.python, {
   type = "python",

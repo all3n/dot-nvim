@@ -54,7 +54,11 @@ function M.run_args()
             print("Input Closed!")
           end,
           on_submit = function(value)
-            vim.cmd("AsyncRun " .. task_cmd .. " " .. value)
+            if _G.all3nvim.exec_env ~= nil then
+              vim.cmd("AsyncRun env=" .. _G.all3nvim.exec_env .. " " .. task_cmd .. " " .. value)
+            else
+              vim.cmd("AsyncRun " .. task_cmd .. " " .. value)
+            end
           end,
         })
         input:mount()
@@ -69,6 +73,10 @@ function M.run_args()
       return true
     end
   }):find()
+end
+
+function M.run_task(name)
+  vim.cmd("AsyncTask " .. name .. " +envs=" .. _G.all3nvim.exec_env)
 end
 
 return M

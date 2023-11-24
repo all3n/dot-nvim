@@ -40,7 +40,6 @@ local function nui_lsp_rename()
       )
     end)
   end
-  
   local popup_options = {
     -- border for the window
     border = {

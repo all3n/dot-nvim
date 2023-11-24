@@ -1,10 +1,11 @@
 local wk = require("which-key")
 
+-- https://github.com/folke/which-key.nvim
 wk.register({
-  -- ["<space>"] = {
-    -- "<Plug>(comment_toggle_linewise_current)",
-    -- "comment_toggle_linewise_current"
-  -- },
+  ["<space>"] = {
+    "<Plug>(comment_toggle_linewise_current)",
+    "comment_toggle_linewise_current"
+  },
   [";"] = { "<cmd>Alpha<CR>", "Dashboard" },
   ["w"] = { "<cmd>w!<CR>", "Save" },
   ["q"] = { "<cmd>confirm q<CR>", "Quit" },
@@ -98,6 +99,7 @@ wk.register({
       "Workspace Symbols",
     },
     e = { "<cmd>Telescope quickfix<cr>", "Telescope Quickfix" },
+    c = { "<cmd>ChangeEnv<cr>", "Change environment" }
   },
   s = {
     s = { "<cmd>Telescope<cr>", "Telescope" },
@@ -124,10 +126,11 @@ wk.register({
     i = { ":TSConfigInfo<cr>", "Info" }
   },
   t = {
-    name = "Tasks",
+    name = "toggle",
     t = { "<cmd>Telescope asynctasks all<cr>", "AsyncTasksList" },
     o = { "<cmd>SymbolsOutline<cr>", "SymbolsOutline" },
-    h = { "<cmd>ClangdSwitchSourceHeader<cr>", "ClangdSwitchSourceHeader" }
+    h = { "<cmd>ClangdSwitchSourceHeader<cr>", "ClangdSwitchSourceHeader" },
+    r = { "<cmd>TroubleToggle<cr>", "TroubleToggle" }
   },
   r = {
     name = "+Run",
@@ -135,7 +138,7 @@ wk.register({
     P = { "<cmd>AsyncTaskProfile<cr>", "AsyncTaskProfile" },
     m = { "<cmd>AsyncTaskMacro<cr>", "AsyncTaskMacro" },
     b = { "<cmd>AsyncTask file-build<cr>", "task:build" },
-    r = { "<cmd>AsyncTask file-run<cr>", "task:run" },
+    r = { "<cmd>lua require 'tasks'.run_task('file-run')<cr>", "task:run" },
     a = { "<cmd>lua require 'tasks'.run_args()<cr>", "run args" },
     p = {
       "+Project",
@@ -168,11 +171,30 @@ wk.register({
     c = { "<cmd>Telescope git_commits<cr>", "Checkout commit" },
     C = {
       "<cmd>Telescope git_bcommits<cr>",
-      "Checkout commit(for current file)",
+      -- "Checkout commit(for current file)",
     },
     d = {
       "<cmd>Gitsigns diffthis HEAD<cr>",
       "Git Diff",
     },
   },
+  o = {
+    "Open",
+    b = { "<cmd>lua require('browse').browse()<cr>", "browse" }
+  },
+  n = {
+    name = "neovim",
+    c = { "<cmd>checkhealth<cr>", "checkhealth" },
+    v = { "<cmd>lua vim.print(vim.inspect(_G.all3nvim))<cr>", "ShowVars" }
+  }
 }, { prefix = "<leader>" })
+
+
+
+-- visual which key
+wk.register({
+  ["<space>"] = {
+    "<Plug>(comment_toggle_linewise_visual)",
+    "comment_toggle_linewise_visual"
+  }
+}, { prefix = "<leader>", mode = "v" })

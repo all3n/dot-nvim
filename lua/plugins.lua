@@ -69,7 +69,9 @@ require("lazy").setup({
   },
   {
     'fgheng/winbar.nvim',
-    config = true
+    config = function()
+      require("plugins.plugin_winbar").setup()
+    end
   },
   {
     "nvim-treesitter/nvim-treesitter",
@@ -79,7 +81,7 @@ require("lazy").setup({
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
-  { "jose-elias-alvarez/null-ls.nvim" },
+  { "jose-elias-alvarez/null-ls.nvim",            config = true },
   { "neovim/nvim-lspconfig" },
   { "mfussenegger/nvim-jdtls",                    ft = "java" },
   { 'nvim-lua/popup.nvim' },
@@ -150,7 +152,11 @@ require("lazy").setup({
     end
   },
   { 'windwp/nvim-autopairs', event = "InsertEnter", opts = {} },
-  { 'numToStr/Comment.nvim', opts = {},             lazy = false },
+  {
+    'numToStr/Comment.nvim',
+    opts = {},
+    lazy = false
+  },
   {
     'akinsho/nvim-toggleterm.lua',
     version = "*",
@@ -246,5 +252,15 @@ require("lazy").setup({
       }
     end
   },
+  {
+    "lalitmee/browse.nvim",
+    dependencies = { "nvim-telescope/telescope.nvim" },
+    config = function()
+      require("plugins.plugin_browse").setup()
+    end
+  },
+  {
+    "nvim-lua/lsp-status.nvim",
+  }
 })
 require("plugins.plugin_lsp_config")
