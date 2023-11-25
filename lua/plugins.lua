@@ -82,7 +82,7 @@ require("lazy").setup({
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
   { "jose-elias-alvarez/null-ls.nvim",            config = true },
-  { "neovim/nvim-lspconfig" },
+  { "neovim/nvim-lspconfig", dependencies = {"b0o/SchemaStore.nvim"} },
   { "mfussenegger/nvim-jdtls",                    ft = "java" },
   { 'nvim-lua/popup.nvim' },
   { "nvim-telescope/telescope.nvim" },
