@@ -50,3 +50,8 @@ cp ~/.config/nvim/configs/config-ubuntu.template.json ~/.config/nvim/config.json
 bash ~/.config/nvim/bin/setup.sh
 sudo apt-get install openjdk-17-jdk
 ```
+
+
+
+## distant
+1. curl -L https://sh.distant.dev | sh -s -- --distant-host 'x86_64-unknown-linux-musl'

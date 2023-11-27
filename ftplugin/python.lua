@@ -1,14 +1,19 @@
 local utils = require("utils")
+local project_config = require("project_config")
 local ui_widgets = require("ui_widgets")
 local dap = require('dap')
 local python = _G.all3nvim.python
 local def_env = python.default
+local p_config = project_config.get()
+if p_config and p_config.python ~= nil then
+  python = vim.tbl_extend("force", python, p_config.python)
+end
 
 for k, v in pairs(python.envs) do
   python.envs[k] = vim.api.nvim_call_function("expand", { v })
 end
 
-python.bin = nil
+-- python.bin = nil
 local envs = {}
 
 local function getCurrentEnvironment(env_python_bin)
@@ -52,6 +57,11 @@ if python.envs ~= nil then
       local env_python_bin = c
       _G.all3nvim.env = getCurrentEnvironment(env_python_bin)
       _G.all3nvim.exec_env = "PYTHON=" .. _G.all3nvim.python.bin
+      project_config.save({
+        python = {
+          bin = _G.all3nvim.python.bin
+        }
+      })
     end)
     picker_fn()
   end
@@ -60,7 +70,7 @@ end
 
 
 if _G.all3nvim.env == nil then
-  _G.all3nvim.env = getCurrentEnvironment(python.envs[def_env])
+  _G.all3nvim.env = getCurrentEnvironment(python.bin or python.envs[def_env])
 end
 if _G.all3nvim.python.bin ~= nil then
   _G.all3nvim.exec_env = "PYTHON=" .. _G.all3nvim.python.bin

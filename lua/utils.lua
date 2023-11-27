@@ -129,4 +129,16 @@ function M.get_project_root(root_patterns)
   return nil
 end
 
+function M.get_project_name()
+  -- local project_root = require("project_nvim.project").last_project
+  local project_root = M.get_project_root(nil)
+  if project_root then
+    local separator = package.config:sub(1, 1)
+    local basename = project_root:match("([^" .. separator .. "]+)$")
+    return basename
+  else
+    return nil
+  end
+end
+
 return M

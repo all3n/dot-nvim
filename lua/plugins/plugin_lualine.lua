@@ -8,6 +8,30 @@ local lsp_env = {
   color = { fg = "#98be65" }
 }
 
+
+local REMOTE_ICON = '📡'
+local function remote_statusline()
+  local ok, plugin = pcall(require, 'distant')
+  if not ok or not plugin:is_initialized() or not plugin.buf.has_data() then
+    return ''
+  end
+  local destination = assert(plugin:client_destination(plugin.buf.client_id()))
+  return ('%s %s'):format(REMOTE_ICON, destination.host)
+end
+
+local project_name = {
+  function()
+    local project_name = require("utils").get_project_name()
+    if project_name then
+      return '[' .. project_name .. ']'
+    else
+      return '-'
+    end
+  end,
+  color = { fg = "#98be65" }
+}
+
+
 M.setup = function()
   require('lualine').setup {
     options = {
@@ -31,8 +55,8 @@ M.setup = function()
     sections = {
       lualine_a = { 'mode' },
       lualine_b = { 'branch', 'diff', 'diagnostics' },
-      lualine_c = { 'filename', lsp_env },
-      lualine_x = { 'encoding', 'fileformat', 'filetype' },
+      lualine_c = { 'filename', lsp_env, remote_statusline },
+      lualine_x = { project_name, 'encoding', 'fileformat', 'filetype' },
       lualine_y = { 'progress' },
       lualine_z = { 'location' }
     },

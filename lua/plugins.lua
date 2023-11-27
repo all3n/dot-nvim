@@ -30,6 +30,12 @@ require("lazy").setup({
       require("plugins.plugin_alpha")
     end
   },
+  {
+    "ahmedkhalf/project.nvim",
+    config = function()
+      require("project_nvim").setup {}
+    end
+  },
   { 'stevearc/dressing.nvim',      event = "VeryLazy",                                      config = true,                                opts = {},    dependencies = { "MunifTanjim/nui.nvim" } },
   { "nvim-tree/nvim-web-devicons", lazy = true },
   { "nvim-lua/plenary.nvim",       cmd = { "PlenaryBustedFile", "PlenaryBustedDirectory" }, lazy = true },
@@ -82,8 +88,11 @@ require("lazy").setup({
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
   { "jose-elias-alvarez/null-ls.nvim",            config = true },
-  { "neovim/nvim-lspconfig", dependencies = {"b0o/SchemaStore.nvim"} },
-  { "mfussenegger/nvim-jdtls",                    ft = "java" },
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = { "b0o/SchemaStore.nvim" }
+  },
+  { "mfussenegger/nvim-jdtls",      ft = "java" },
   { 'nvim-lua/popup.nvim' },
   { "nvim-telescope/telescope.nvim" },
   { "folke/trouble.nvim" },
@@ -114,10 +123,12 @@ require("lazy").setup({
     end,
     event = { "InsertEnter", "CmdlineEnter" }
   },
-  { "williamboman/mason.nvim",           config = function()
-    require("plugins.plugin_mason").setup()
-
-  end},
+  {
+    "williamboman/mason.nvim",
+    config = function()
+      require("plugins.plugin_mason").setup()
+    end
+  },
   { "williamboman/mason-lspconfig.nvim", config = true },
   { "lewis6991/gitsigns.nvim",           config = true },
   {
@@ -214,12 +225,6 @@ require("lazy").setup({
   { 'GustavoKatel/telescope-asynctasks.nvim' },
   { 'phaazon/hop.nvim',                      config = true },
   {
-    "ahmedkhalf/project.nvim",
-    config = function()
-      require("project_nvim").setup {}
-    end
-  },
-  {
     'rcarriga/nvim-notify',
     config = function()
       vim.notify = require("notify")
@@ -264,6 +269,19 @@ require("lazy").setup({
   },
   {
     "nvim-lua/lsp-status.nvim",
+  },
+  {
+    "cshuaimin/ssr.nvim",
+    config = function()
+      require("ssr").setup()
+    end
+  },
+  {
+    'chipsenkbeil/distant.nvim',
+    branch = 'v0.3',
+    config = function()
+      require('distant'):setup()
+    end
   }
 })
 require("plugins.plugin_lsp_config")

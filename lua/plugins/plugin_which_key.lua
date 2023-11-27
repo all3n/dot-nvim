@@ -196,5 +196,8 @@ wk.register({
   ["<space>"] = {
     "<Plug>(comment_toggle_linewise_visual)",
     "comment_toggle_linewise_visual"
+  },
+  s = {
+    r = { "<cmd>lua require 'ssr'.open()<cr>", "RenameBlock" },
   }
 }, { prefix = "<leader>", mode = "v" })
