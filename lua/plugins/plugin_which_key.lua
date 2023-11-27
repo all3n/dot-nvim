@@ -186,6 +186,12 @@ wk.register({
     name = "neovim",
     c = { "<cmd>checkhealth<cr>", "checkhealth" },
     v = { "<cmd>lua vim.print(vim.inspect(_G.all3nvim))<cr>", "ShowVars" }
+  },
+  m = {
+    name = "Markdown",
+    t = { "<cmd>MarkdownPreviewToggle<cr>", "MarkdownPreviewToggle" },
+    f = { "<cmd>MarkdownPreview<cr>", "MarkdownPreview" },
+    p = { "<cmd>MarkdownPreviewStop<cr>", "MarkdownPreviewStop" }
   }
 }, { prefix = "<leader>" })
 

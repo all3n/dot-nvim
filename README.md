@@ -2,6 +2,12 @@
 ## Install
 ```
 git clone https://github.com/all3n/dot-nvim.git ~/.config/nvim
+cd ~/.config/nvim
+# for osx
+cp configs/config-osx.template.json config.json
+
+# for ubuntu
+cp configs/config-ubuntu.template.json config.json
 ```
 ## global 
 1. leader -> space
@@ -15,6 +21,8 @@ git clone https://github.com/all3n/dot-nvim.git ~/.config/nvim
 ## plugins configuration
 1. lua/plugins.lua
 
+## colorscheme
+1. everforest
 
 ## plugins details configuration
 1. lua/plugins/alpha.lua
@@ -27,16 +35,31 @@ git clone https://github.com/all3n/dot-nvim.git ~/.config/nvim
     1. quick key support
 # dot-nvim
 
-
 | keymap   |      description      |  mode |
 |----------|:-------------:|------:|
-| leader + space |  toggle current line comment | -|
-| leader + lf   |  format file by lsp |- |
-| leader + e     |toggle nvim-tree |-|
-| leader + to    |toggle symbol outline|-|
-| S-h,S-l        |buffer previous/next|-|
-| c+w h,j,k,l    |windows jump|-|
-| ctrl + \       |toggle float terminal|-|
+| leader + ;   |dashboard|n|
+| leader + space |  toggle line/multi comment | n/v|
+| leader + c     |close buf |n|
+| leader + bo     |close others buffer |n|
+| leader + w     |save |n|
+| leader + lf   |  format file by lsp |n |
+| leader + la   |lsp actions|n|
+| leader + lc   |lsp change env,py|n|
+| leader + e     |toggle nvim-tree |n|
+| leader + g     |git actions |n|
+| leader + d     |debug actions |n|
+| leader + to    |toggle symbol outline|n|
+| leader + th    |toggle header/source for c/c++|n|
+| leader + hw    |hop jump by word|n|
+| S-h,S-l        |buffer previous/next|n|
+| c+w h,j,k,l    |windows jump|n|
+| ctrl + \       |toggle float terminal|n|
+| leader + rr     |run file |n|
+| leader + ra     |run by args |n|
+| leader + st     |search text |n|
+| leader + sf     |search file |n|
+| leader + sr     |search recent file |n|
+| leader + mt     |toggle markdown preview(md) |n|
 
 
 ## LuaSnip
@@ -51,7 +74,6 @@ bash ~/.config/nvim/bin/setup.sh
 sudo apt-get install openjdk-17-jdk
 ```
 
-
-
 ## distant
+1. use musl libc for avoid glibc not support
 1. curl -L https://sh.distant.dev | sh -s -- --distant-host 'x86_64-unknown-linux-musl'

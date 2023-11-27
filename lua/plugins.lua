@@ -282,6 +282,12 @@ require("lazy").setup({
     config = function()
       require('distant'):setup()
     end
+  },
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
   }
 })
 require("plugins.plugin_lsp_config")
