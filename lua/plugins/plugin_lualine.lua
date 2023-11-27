@@ -32,6 +32,14 @@ local project_name = {
 }
 
 
+
+
+
+
+
+
+
+
 M.setup = function()
   require('lualine').setup {
     options = {

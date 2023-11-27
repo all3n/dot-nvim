@@ -2,6 +2,7 @@
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local lspconfig = require('lspconfig')
 
+
 lspconfig.bashls.setup {}
 lspconfig.jsonls.setup {
   settings = {

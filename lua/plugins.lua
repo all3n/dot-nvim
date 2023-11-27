@@ -92,6 +92,7 @@ require("lazy").setup({
     "neovim/nvim-lspconfig",
     dependencies = { "b0o/SchemaStore.nvim" }
   },
+  { "j-hui/fidget.nvim",            config = true },
   { "mfussenegger/nvim-jdtls",      ft = "java" },
   { 'nvim-lua/popup.nvim' },
   { "nvim-telescope/telescope.nvim" },
@@ -137,7 +138,7 @@ require("lazy").setup({
       require("plugins.plugin_lualine").setup()
     end
   },
-  { "folke/trouble.nvim",           config = true },
+  { "folke/trouble.nvim",              config = true },
   -- debug
   {
     "mfussenegger/nvim-dap",
@@ -145,8 +146,9 @@ require("lazy").setup({
       require("plugins.plugin_dap").setup()
     end
   },
+  { "theHamsta/nvim-dap-virtual-text", config = true },
   { "rcarriga/nvim-dap-ui" },
-  { "mfussenegger/nvim-dap-python", ft = "python" },
+  { "mfussenegger/nvim-dap-python",    ft = "python" },
   {
     "Weissle/persistent-breakpoints.nvim",
     config = function()
@@ -268,9 +270,6 @@ require("lazy").setup({
     end
   },
   {
-    "nvim-lua/lsp-status.nvim",
-  },
-  {
     "cshuaimin/ssr.nvim",
     config = function()
       require("ssr").setup()
@@ -288,6 +287,47 @@ require("lazy").setup({
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
+  },
+  {
+    'stevearc/overseer.nvim',
+    opts = {}
+  },
+  {
+    'Vigemus/iron.nvim',
+    config = function()
+      local iron = require("iron.core")
+      local view = require("iron.view")
+      iron.setup({
+        config = {
+          scratch_repl = true,
+          repl_definition = {
+            sh = {
+              command = { "zsh" }
+            }
+          },
+          repl_open_cmd = "vertical botright 80 split",
+        },
+        keymaps = {
+          send_motion = "<space>sc",
+          visual_send = "<space>sc",
+          send_file = "<space>sf",
+          send_line = "<space>sl",
+          send_until_cursor = "<space>su",
+          send_mark = "<space>sm",
+          mark_motion = "<space>mc",
+          mark_visual = "<space>mc",
+          remove_mark = "<space>md",
+          cr = "<space>s<cr>",
+          interrupt = "<space>s<space>",
+          exit = "<space>sq",
+          clear = "<space>cl",
+        },
+        highlight = {
+          italic = true
+        },
+        ignore_blank_lines = true,
+      })
+    end
   }
 })
 require("plugins.plugin_lsp_config")
