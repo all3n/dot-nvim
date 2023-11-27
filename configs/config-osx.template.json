@@ -1,0 +1,38 @@
+{
+  "plugins": {
+    "tabnine": true
+  },
+  "mason": {
+    "install": [
+      "clangd",
+      "pyright",
+      "json-lsp",
+      "lua-language-server",
+      "clang-format",
+      "bash-language-server",
+      "yaml-language-server",
+      "marksman"
+    ]
+  },
+  "python": {
+    "envs": {
+      "conda": "~/anaconda3/bin/python",
+      "sys": "/usr/bin/python3",
+      "homebrew": "/opt/homebrew/bin/python3"
+    },
+    "default": "conda"
+  },
+  "cxx": {},
+  "java": {
+    "envs": {
+      "JavaSE-1.8": "~/opt/jdk8",
+      "JavaSE-17": "/opt/homebrew/Cellar/openjdk@17/17.0.9/libexec/openjdk.jdk/Contents/Home",
+      "JavaSE-21": "/opt/homebrew/opt/openjdk@21"
+    },
+    "default": "JavaSE-1.8",
+    "lsp": {
+      "jdtls_home": "~/opt/jdtls-1.29.0",
+      "jdtls_env": "JavaSE-21"
+    }
+  }
+}
