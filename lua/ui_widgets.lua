@@ -5,6 +5,9 @@ local actions = require('telescope.actions')
 local sorters = require('telescope.sorters')
 local state = require('telescope.actions.state')
 
+local Input = require("nui.input")
+local event = require("nui.utils.autocmd").event
+
 
 -- https://github.com/nvim-telescope/telescope.nvim/blob/master/developers.md
 
@@ -36,4 +39,46 @@ function M.build_picker(title, choices, call_back)
   end
   return picker_fn
 end
+
+function M.input_popup(title, fn, popup_opts, input_opts)
+  local default_popup_opts = {
+    position = "50%",
+    size = {
+      width = 120,
+    },
+    border = {
+      style = "single",
+      text = {
+        top = title,
+        top_align = "center",
+      },
+    },
+    win_options = {
+      winhighlight = "Normal:Normal,FloatBorder:Normal",
+    },
+  }
+  local default_input_opts = {
+    prompt = ">",
+    default_value = "",
+    on_submit = fn
+  }
+
+  if popup_opts == nil then
+    popup_opts = default_popup_opts
+  else
+    popup_opts = vim.tbl_extend("force", default_popup_opts, popup_opts)
+  end
+  if input_opts == nil then
+    input_opts = default_input_opts
+  else
+    input_opts = vim.tbl_extend("force", default_input_opts, input_opts)
+  end
+
+  local input = Input(popup_opts, input_opts)
+  input:mount()
+  input:on(event.BufLeave, function()
+    input:unmount()
+  end)
+end
+
 return M

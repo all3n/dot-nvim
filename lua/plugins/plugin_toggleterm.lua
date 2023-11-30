@@ -12,12 +12,13 @@ local python_cmd = function()
 end
 M.term_id_map = {}
 M.last_id = nil
+M.terms_map = {}
 M.execs = {
   { nil,        "<C-T>",  "Horizontal Terminal", "horizontal", 0.3 },
   { nil,        "<C-\\>", "Float Terminal",      "float",      nil },
   { python_cmd, "<C-p>",  "Python",              "horizontal", 0.3 },
 }
-local get_next_id = function()
+M.get_next_id = function()
   if M.last_id == nil then
     M.last_id = 1
   else
@@ -111,12 +112,12 @@ M.setup = function()
   end
 end
 
-M.get_cmd_idx = function(cmd)
-  if M.term_id_map[cmd] ~= nil then
-    return M.term_id_map[cmd]
+M.get_cmd_idx = function(key)
+  if M.term_id_map[key] ~= nil then
+    return M.term_id_map[key]
   else
-    M.term_id_map[cmd] = get_next_id()
-    return M.term_id_map[cmd]
+    M.term_id_map[key] = M.get_next_id()
+    return M.term_id_map[key]
   end
 end
 
@@ -140,7 +141,8 @@ M.lazygit_toggle = function()
   lazygit:toggle()
 end
 
-M.cmd_toggle = function(cmd)
+M.cmd_toggle = function(cmd, count)
+  local count_idx = count or M.get_cmd_idx(cmd)
   local Terminal = require("toggleterm.terminal").Terminal
   local term_cmd = Terminal:new {
     cmd = cmd,
@@ -155,9 +157,35 @@ M.cmd_toggle = function(cmd)
       vim.cmd "startinsert!"
     end,
     on_close = function(_) end,
-    count = M.get_cmd_idx(cmd),
+    count = count_idx
   }
   term_cmd:toggle()
+end
+
+M.get_term = function(key, opts)
+  local count_idx = M.get_cmd_idx(key)
+  local term_cmd = M.terms_map[key]
+  if term_cmd == nil then
+    local Terminal = require("toggleterm.terminal").Terminal
+    local default_opts = {
+      hidden = true,
+      direction = "horizontal",
+      size = 0.3,
+      on_close = function(_) end,
+      count = count_idx
+    }
+    if opts ~= nil then
+      opts = vim.tbl_deep_extend("force", default_opts, opts)
+    else
+      opts = default_opts
+    end
+    term_cmd = Terminal:new(opts)
+    M.terms_map[key] = term_cmd
+    if not term_cmd:is_open() then
+      term_cmd:open()
+    end
+  end
+  return term_cmd
 end
 
 

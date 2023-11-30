@@ -137,14 +137,9 @@ wk.register({
     l = { "<cmd>AsyncTaskList<cr>", "AsyncTaskList" },
     P = { "<cmd>AsyncTaskProfile<cr>", "AsyncTaskProfile" },
     m = { "<cmd>AsyncTaskMacro<cr>", "AsyncTaskMacro" },
-    b = { "<cmd>AsyncTask file-build<cr>", "task:build" },
-    r = { "<cmd>lua require 'tasks'.run_task('file-run')<cr>", "task:run" },
-    a = { "<cmd>lua require 'tasks'.run_args()<cr>", "run args" },
-    p = {
-      "+Project",
-      b = { "<cmd>AsyncTask project-build<cr>", "task:project:build" },
-      r = { "<cmd>AsyncTask project-run<cr>", "task:project:run" },
-    },
+    r = { "<cmd>RunFile<cr>", "run file" },
+    a = { "<cmd>RunFileArgs<cr>", "run file args" },
+    b = { "<cmd>lua require('plugins.plugin_toggleterm').get_term('build_term'):toggle()<cr>", "toggle build" },
     T = { "<cmd>lua require('test').input()<cr>", "Test" }
   },
   h = {
@@ -180,7 +175,13 @@ wk.register({
   },
   o = {
     "Open",
-    b = { "<cmd>lua require('browse').browse()<cr>", "browse" }
+    B = { "<cmd>lua require('browse').browse()<cr>", "browse" },
+    r = { "<cmd>OverseerRun<cr>", "OverseerRun" },
+    x = { "<cmd>OverseerClose<cr>", "OverseerClose" },
+    b = { "<cmd>OverseerRunBuild<cr>", "OverseerBuild" },
+    c = { "<cmd>OverseerRunCmd<cr>", "OverseerRunCmd" },
+    t = { "<cmd>OverseerToggle<cr>", "OverseerToggle" },
+    i = { "<cmd>OverseerInfo<cr>", "OverseerInfo" }
   },
   n = {
     name = "neovim",

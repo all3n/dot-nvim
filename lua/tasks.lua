@@ -79,4 +79,16 @@ function M.run_task(name)
   vim.cmd("AsyncTask " .. name .. " +envs=" .. _G.all3nvim.exec_env)
 end
 
+function M.envs()
+  local envs = {
+    VIM_FILEPATH = vim.fn.expand("%:p"),
+    VIM_HOME = vim.fn.stdpath("config"),
+    VIM_PATHNOEXT = vim.fn.expand("%:p:r"),
+    VIM_FILENOEXT = vim.fn.expand("%:t:r"),
+    VIM_FILEDIR = vim.fn.expand("%:p:h"),
+    VIM_CWD = vim.loop.cwd()
+  }
+  return envs
+end
+
 return M

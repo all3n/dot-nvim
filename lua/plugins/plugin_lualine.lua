@@ -64,7 +64,7 @@ M.setup = function()
       lualine_a = { 'mode' },
       lualine_b = { 'branch', 'diff', 'diagnostics' },
       lualine_c = { 'filename', lsp_env, remote_statusline },
-      lualine_x = { project_name, 'encoding', 'fileformat', 'filetype' },
+      lualine_x = { 'overseer', project_name, 'encoding', 'fileformat', 'filetype' },
       lualine_y = { 'progress' },
       lualine_z = { 'location' }
     },

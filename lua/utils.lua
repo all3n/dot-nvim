@@ -141,4 +141,62 @@ function M.get_project_name()
   end
 end
 
+function M.envs()
+  local envs = {
+    VIM_FILEPATH = vim.fn.expand("%:p"),
+    VIM_HOME = vim.fn.stdpath("config"),
+    VIM_PATHNOEXT = vim.fn.expand("%:p:r"),
+    VIM_FILENOEXT = vim.fn.expand("%:t:r"),
+    VIM_FILENAME = vim.fn.expand("%:t"),
+    VIM_FILEDIR = vim.fn.expand("%:p:h"),
+    VIM_FILEEXT = vim.fn.expand("%:e"),
+    VIM_CWD = vim.loop.cwd()
+  }
+  return envs
+end
+
+function M.mkdir_temp(prefix)
+  local sys_tmp_dir = vim.loop.os_tmpdir()
+  local tmp_dir = join_paths(sys_tmp_dir, prefix .. "XXXXXX")
+  return vim.loop.fs_mkdtemp(tmp_dir)
+end
+
+function M.replace_vars(text, vars)
+  local formattedString = text:gsub("%${(.-)}", function(match)
+    return vars[match] or ""
+  end)
+  return formattedString
+end
+
+function M.remove_directory_recursive(path)
+  local function remove_file_or_directory(itemPath)
+    local stat = uv.fs_stat(itemPath)
+    if stat then
+      if stat.type == "directory" then
+        M.remove_directory_recursive(itemPath) -- 递归删除子文件夹
+        uv.fs_rmdir(itemPath)                  -- 删除空文件夹
+        vim.notify("rm dir "..itemPath)
+      else
+        uv.fs_unlink(itemPath) -- 删除文件
+        vim.notify("rm "..itemPath)
+      end
+    end
+  end
+
+  local dir = uv.fs_opendir(path)
+  if dir then
+    while true do
+      local items = uv.fs_readdir(dir)
+      vim.notify(path .. " items:" .. vim.inspect(items))
+      if not items then break end
+      for _, item in ipairs(items) do
+        local itemPath = join_paths(path, item.name)
+        remove_file_or_directory(itemPath)
+      end
+      remove_file_or_directory(path)
+    end
+    uv.fs_closedir(dir)
+  end
+end
+
 return M

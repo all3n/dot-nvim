@@ -24,7 +24,22 @@ M.defaults = {
         _G.all3nvim.change_env(_G.all3nvim.envs)
       end
     end
+  },
+  {
+    name = "RunFile",
+    fn = function()
+      require("all3nvim.executor").execute(nil)
+    end
+  },
+  {
+    name = "RunFileArgs",
+    fn = function()
+      require("ui_widgets").input_popup("args", function(args)
+        require("all3nvim.executor").execute(args)
+      end)
+    end
   }
+
 }
 
 function M.load(collection)

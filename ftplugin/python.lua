@@ -1,4 +1,8 @@
+local null_ls = require("null-ls")
+null_ls.register({ null_ls.builtins.formatting.autopep8 })
+
 local utils = require("utils")
+local commands = require("commands")
 local project_config = require("project_config")
 local ui_widgets = require("ui_widgets")
 local dap = require('dap')
@@ -7,6 +11,31 @@ local def_env = python.default
 local p_config = project_config.get()
 if p_config and p_config.python ~= nil then
   python = vim.tbl_extend("force", python, p_config.python)
+end
+
+local project_python_path = python["PYTHONPATH"]
+local project_dir = utils.get_project_root(nil)
+
+-- local python_commands = {
+--   {
+--     name = "AddPythonPath",
+--     fn = function()
+--
+--     end
+--   }
+-- }
+-- commands.load(python_commands)
+
+
+
+
+-- local project_python_dir = join_paths(project_dir, "python")
+if project_python_path ~= nil then
+  if vim.env["PYTHONPATH"] == nil then
+    vim.env["PYTHONPATH"] = project_python_path
+  else
+    vim.env["PYTHONPATH"] = vim.env["PYTHONPATH"] .. ":" .. project_python_path
+  end
 end
 
 for k, v in pairs(python.envs) do
