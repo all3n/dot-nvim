@@ -21,7 +21,7 @@ function M.create_directory_if_not_exists(directory_path)
       vim.notify("Failed to create directory: " .. create_error)
       return
     end
-    vim.notify("Directory created: " .. directory_path)
+    -- vim.notify("Directory created: " .. directory_path)
   end
 end
 

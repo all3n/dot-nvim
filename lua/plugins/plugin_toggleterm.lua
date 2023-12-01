@@ -15,7 +15,7 @@ M.last_id = nil
 M.terms_map = {}
 M.execs = {
   { nil,        "<C-T>",  "Horizontal Terminal", "horizontal", 0.3 },
-  { nil,        "<C-\\>", "Float Terminal",      "float",      nil },
+  -- { nil,        "<C-\\>", "Float Terminal",      "float",      nil },
   { python_cmd, "<C-p>",  "Python",              "horizontal", 0.3 },
 }
 M.get_next_id = function()
@@ -89,7 +89,9 @@ M.setup = function()
       end
     end,
     open_mapping = [[<c-\>]],
-    direction = 'float',
+    close_on_exit = true,
+    persist_size = true,
+    -- direction = 'float',
   })
   for i, exec in pairs(M.execs) do
     local direction = exec[4] or M.direction
@@ -110,6 +112,20 @@ M.setup = function()
     end
     M.add_exec(opts)
   end
+
+  function _G.set_terminal_keymaps()
+    local opts = { buffer = 0 }
+    vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+    vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+    vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+    vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+    vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+    vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+    vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+  end
+
+  -- if you only want these mappings for toggle term use term://*toggleterm#* instead
+  vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 end
 
 M.get_cmd_idx = function(key)
@@ -172,7 +188,7 @@ M.get_term = function(key, opts)
       direction = "horizontal",
       size = 0.3,
       on_close = function(_) end,
-      count = count_idx
+      count = count_idx,
     }
     if opts ~= nil then
       opts = vim.tbl_deep_extend("force", default_opts, opts)

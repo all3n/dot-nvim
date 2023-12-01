@@ -12,6 +12,7 @@ function ExtHandler.new(ext, executor, sdk_home, build, cmd)
   self.executor = executor
   self.build = build
   self.cmd = cmd
+  self.cmds = {}
   self.cmd_idx = nil
   self.sdk_home = sdk_home
   return self
@@ -21,11 +22,12 @@ function ExtHandler.__tostring(self)
   return self.ext
 end
 
-function ExtHandler.run_cmd(self, command, envs)
+function ExtHandler.add_cmd(self, command, envs)
   -- local args = vim.tbl_extend("force", self.envs)
   local args = self.envs
   command = utils.replace_vars(command, args)
-  self.term_cmd:send(command, true)
+  table.insert(self.cmds, command)
+  -- self.term_cmd:send(command, false)
 end
 
 local function get_dependencies(h, file_path, visited)
@@ -57,9 +59,10 @@ local function gxx_build(handler, file_path, build_dir)
   local dependencies = get_dependencies(handler, file_path, nil)
   local envs = handler.envs
   local bin_path = build_dir .. "/" .. envs.VIM_FILENOEXT
-  local cmd = string.format("cd %s && %s -o %s %s %s", envs.VIM_FILEDIR, handler.executor, bin_path,
+  table.insert(handler.cmds, "cd " .. envs.VIM_FILEDIR)
+  local build_cmd = string.format("%s -o %s %s %s", handler.executor, bin_path,
     envs.VIM_FILENAME, table.concat(dependencies, " "))
-  handler.run_cmd(handler, cmd)
+  handler.add_cmd(handler, build_cmd)
   handler.cmd = bin_path
 end
 
@@ -86,9 +89,9 @@ local function java_build(handler, file_path, build_dir)
     java_bin = handler.sdk_home .. "/bin/java"
     javac_bin = handler.sdk_home .. "/bin/javac"
   end
-  local build_cmd = string.format("%s -d %s %s", javac_bin, build_dir, file_path)
+  local build_cmd = string.format("%s -d %s %s", javac_bin, build_dir, handler.envs.VIM_FILENAME)
   handler.cmd = java_bin .. " -cp " .. build_dir .. " " .. main_class
-  handler.run_cmd(handler, build_cmd)
+  handler.add_cmd(handler, build_cmd)
 end
 
 local gcc = ExtHandler.new("c", os.getenv("CC") or "gcc", nil, gxx_build)
@@ -106,11 +109,14 @@ M.ext_handle = {
   js = ExtHandler.new("js", "node"),
   go = ExtHandler.new("go", nil, nil, nil, "go run ${VIM_FILENAME}"),
   rs = ExtHandler.new("rust", nil, nil, nil, "rustc ${VIM_FILENAME} && ./${VIM_FILENOEXT}"),
-  pl = ExtHandler.new("perl", "perl")
+  pl = ExtHandler.new("perl", "perl"),
+  lua = ExtHandler.new("lua", "lua")
 }
 
 function M.execute(args)
+  -- env fetch must before term open
   local envs = utils.envs()
+  local project_name = utils.get_project_name()
   local file_path = envs.VIM_FILEPATH
   local file_dir = envs.VIM_FILEDIR
   local ext_name = envs.VIM_FILEEXT
@@ -118,20 +124,26 @@ function M.execute(args)
   local file_name = envs.VIM_FILENAME
   local handler = M.ext_handle[ext_name]
   if not handler then
-    vim.notify("not supported extension" .. ext_name)
+    vim.notify("not supported extension:" .. ext_name)
     return -1
   end
   handler.envs = envs
-  handler.term_cmd = term.get_term("build_term")
+  handler.cmds = {}
+  handler.term_cmd = term.get_term("build_term", {
+    on_open = function(_)
+      vim.cmd "startinsert!"
+    end,
+  })
   if not handler.term_cmd:is_open() then
     handler.term_cmd:open()
   end
   handler.term_cmd:change_dir(file_dir, true)
-  handler.term_cmd:send("clear", true)
 
   local build_dir = nil
   if handler.build then
-    build_dir = utils.mkdir_temp("nvim_build_" .. file_no_ext)
+    build_dir = join_paths(vim.fn.stdpath("cache"), project_name, "build_" .. ext_name)
+    -- build_dir = utils.mkdir_temp("nvim_build_" .. file_no_ext)
+    table.insert(handler.cmds, "mkdir -p " .. build_dir)
     handler.envs["build_dir"] = build_dir
     handler.build(handler, file_path, build_dir)
   end
@@ -140,15 +152,12 @@ function M.execute(args)
   if not cmd and handler.executor then
     cmd = handler.executor .. " " .. file_path
   end
+
   if args then
-    handler.run_cmd(handler, cmd .. " " .. args)
-  else
-    handler.run_cmd(handler, cmd)
+    cmd = cmd .. " " .. args
   end
-  if build_dir then
-    -- utils.remove_directory_recursive(build_dir)
-    handler.run_cmd(handler, "rm -rf " .. build_dir)
-  end
+  handler.add_cmd(handler, cmd)
+  handler.term_cmd:send(handler.cmds, true)
 end
 
 return M

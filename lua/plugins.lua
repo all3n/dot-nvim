@@ -300,6 +300,16 @@ require("lazy").setup({
     config = function()
       require("plugins.plugin_iron").setup()
     end
-  }
+  },
+  {
+    "ThePrimeagen/refactoring.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("refactoring").setup()
+    end,
+  },
 })
 require("plugins.plugin_lsp_config")

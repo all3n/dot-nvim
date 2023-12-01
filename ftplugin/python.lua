@@ -1,5 +1,5 @@
 local null_ls = require("null-ls")
-null_ls.register({ null_ls.builtins.formatting.autopep8 })
+null_ls.register({ null_ls.builtins.formatting.autopep8, null_ls.builtins.code_actions.refactoring })
 
 local utils = require("utils")
 local commands = require("commands")
