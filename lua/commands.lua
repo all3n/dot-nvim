@@ -28,15 +28,21 @@ M.defaults = {
   {
     name = "RunFile",
     fn = function()
-      require("all3nvim.executor").execute(nil)
+      require("all3nvim.executor").execute(nil, true)
     end
   },
   {
     name = "RunFileArgs",
     fn = function()
       require("ui_widgets").input_popup("args", function(args)
-        require("all3nvim.executor").execute(args)
+        require("all3nvim.executor").execute(args, true)
       end)
+    end
+  },
+  {
+    name = "RunBuild",
+    fn = function()
+      require("all3nvim.executor").execute(nil, false)
     end
   }
 

@@ -30,42 +30,6 @@ function ExtHandler.add_cmd(self, command, envs)
   -- self.term_cmd:send(command, false)
 end
 
-local function get_dependencies(h, file_path, visited)
-  if not visited then
-    visited = {}
-  end
-  local dependencies = {}
-  local file = io.open(file_path, "r")
-  if file then
-    local content = file:read("*a")
-    local pattern = '#include%s+"(.-)%.h"'
-    for match in string.gmatch(content, pattern) do
-      local dependency_file = match .. "." .. h.envs.VIM_FILEEXT
-      if not visited[dependency_file] then
-        visited[dependency_file] = true
-        local sub_dependencies = get_dependencies(h, dependency_file, visited)
-        for _, sub_dependency in ipairs(sub_dependencies) do
-          table.insert(dependencies, sub_dependency)
-        end
-        table.insert(dependencies, dependency_file)
-      end
-    end
-    file:close()
-  end
-  return dependencies
-end
-
-local function gxx_build(handler, file_path, build_dir)
-  local dependencies = get_dependencies(handler, file_path, nil)
-  local envs = handler.envs
-  local bin_path = build_dir .. "/" .. envs.VIM_FILENOEXT
-  table.insert(handler.cmds, "cd " .. envs.VIM_FILEDIR)
-  local build_cmd = string.format("%s -o %s %s %s", handler.executor, bin_path,
-    envs.VIM_FILENAME, table.concat(dependencies, " "))
-  handler.add_cmd(handler, build_cmd)
-  handler.cmd = bin_path
-end
-
 local function parse_java_class(file_path)
   local file = io.open(file_path, "r")
   if file then
@@ -93,9 +57,9 @@ local function java_build(handler, file_path, build_dir)
   handler.cmd = java_bin .. " -cp " .. build_dir .. " " .. main_class
   handler.add_cmd(handler, build_cmd)
 end
-
-local gcc = ExtHandler.new("c", os.getenv("CC") or "gcc", nil, gxx_build)
-local gxx = ExtHandler.new("cpp", os.getenv("CXX") or "g++", nil, gxx_build)
+local runner_c = require("all3nvim.runner.c")
+local gcc = ExtHandler.new("c", os.getenv("CC") or "gcc", nil, runner_c.gxx_build)
+local gxx = ExtHandler.new("cpp", os.getenv("CXX") or "g++", nil, runner_c.gxx_build)
 local python = ExtHandler.new("python", os.getenv("PYTHON") or "python")
 local java = ExtHandler.new("java", os.getenv("JAVA_HOME"), nil, java_build)
 
@@ -113,7 +77,7 @@ M.ext_handle = {
   lua = ExtHandler.new("lua", "lua")
 }
 
-function M.execute(args)
+function M.execute(args, run)
   -- env fetch must before term open
   local envs = utils.envs()
   local project_name = utils.get_project_name()
@@ -131,12 +95,13 @@ function M.execute(args)
   handler.cmds = {}
   handler.term_cmd = term.get_term("build_term", {
     on_open = function(_)
-      vim.cmd "startinsert!"
+      -- vim.cmd "startinsert!"
     end,
   })
   if not handler.term_cmd:is_open() then
     handler.term_cmd:open()
   end
+  handler.term_cmd:send("clear", true)
   handler.term_cmd:change_dir(file_dir, true)
 
   local build_dir = nil
@@ -148,15 +113,17 @@ function M.execute(args)
     handler.build(handler, file_path, build_dir)
   end
 
-  local cmd = handler.cmd
-  if not cmd and handler.executor then
-    cmd = handler.executor .. " " .. file_path
-  end
+  if run then
+    local cmd = handler.cmd
+    if not cmd and handler.executor then
+      cmd = handler.executor .. " " .. file_path
+    end
 
-  if args then
-    cmd = cmd .. " " .. args
+    if args then
+      cmd = cmd .. " " .. args
+    end
+    handler.add_cmd(handler, cmd)
   end
-  handler.add_cmd(handler, cmd)
   handler.term_cmd:send(handler.cmds, true)
 end
 

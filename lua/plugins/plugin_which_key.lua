@@ -139,7 +139,8 @@ wk.register({
     m = { "<cmd>AsyncTaskMacro<cr>", "AsyncTaskMacro" },
     r = { "<cmd>RunFile<cr>", "run file" },
     a = { "<cmd>RunFileArgs<cr>", "run file args" },
-    b = { "<cmd>lua require('plugins.plugin_toggleterm').get_term('build_term'):toggle()<cr>", "toggle build" },
+    b = { "<cmd>RunBuild<cr>", "run file build" },
+    t = { "<cmd>lua require('plugins.plugin_toggleterm').get_term('build_term'):toggle()<cr>", "toggle build" },
     T = { "<cmd>lua require('test').input()<cr>", "Test" }
   },
   h = {
