@@ -1,11 +1,16 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"  all3n vimrc simple
+"  all3n vimrc simple no plugin
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
 set history=1000
 
 let g:netrw_winsize = 15
 let g:netrw_split = 0
+let g:input_mode = 0
+
+
+set clipboard=unnamed,unnamedplus
+set mouse=a
 
 " Enable filetype plugins
 filetype plugin on
@@ -60,7 +65,15 @@ au BufRead,BufNewFile http*.conf setlocal ft=apache
 au BufRead,BufNewFile nginx.conf setlocal ft=nginx
 au BufRead,BufNewFile *.ini      setlocal ft=dosini
 
-
+function! IsVisualStudio()
+    if has('gui_running') && has('termguicolors')
+        let editor = $TERM_PROGRAM
+        if editor ==# 'Visual Studio' || editor ==# 'Visual Studio Code'
+            return 1
+        endif
+    endif
+    return 0
+endfunction
 " OS TYPE
 if(has('win32') || has('win64'))
     let g:isWIN = 1
@@ -237,8 +250,6 @@ map <leader>tm :tabmove
 
 nnoremap <S-h> :tabprev<CR>
 nnoremap <S-l> :tabnext<CR>
-"nnoremap <F3> :tabnext<CR>
-"nnoremap <F2> :tabprev<CR>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -378,7 +389,7 @@ vnoremap <leader><Space> :call ToggleComment()<cr>
 " => vimgrep searching and cope displaying
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " When you press gv you vimgrep after the selected text
-vnoremap <silent> gv :call VisualSelection('gv')<CR>
+" vnoremap <silent> gv :call VisualSelection('gv')<CR>
 
 " Open vimgrep and put the cursor in the right position
 "map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
@@ -387,7 +398,7 @@ vnoremap <silent> gv :call VisualSelection('gv')<CR>
 "map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
 
 " When you press <leader>r you can search and replace the selected text
-vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
+" vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 
 " Do :help cope if you are unsure what cope is. It's super useful!
 "
@@ -427,14 +438,14 @@ noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 
 " Quickly open a buffer for scripbble
-map <leader>q :e ~/buffer<cr>
+map <leader>q :wq!<cr>
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
+" replace all tab to space
 map <leader>tt :%retab!<cr>
+" open inner explore in left side
 map <leader>e :Lexplore<cr>
-
-
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -552,19 +563,23 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Compile Run
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-func! Compile_Run_Code()
+func! Compile_Run_Code(is_input)
     exec 'w'
+    let cmd_suffix = ''
+    if a:is_input
+        let cmd_suffix = cmd_suffix . '< ./%:r.txt'
+    endif
     if &filetype == 'c'
         if g:isWIN
-            exec '!gcc -Wall -std=c11 -o %:r %:t && %:r.exe'
+            exec '!gcc -Wall -std=c11 -o %:r %:t && %:r.exe ' . cmd_suffix
         else
-            exec '!gcc -Wall -std=c11 -o %:r.out %:t && ./%:r.out && rm ./%:r.out'
+            exec '!gcc -Wall -std=c11 -o %:r.out %:t && ./%:r.out ' . cmd_suffix . ' && rm ./%:r.out'
         endif
     elseif &filetype == 'cpp'
         if g:isWIN
-            exec '!g++ -Wall -std=c++11 -o %:r %:t && %:r.exe'
+            exec '!g++ -Wall -std=c++11 -o %:r %:t && %:r.exe' . cmd_suffix
         else
-            exec '!g++ -Wall -std=c++11 -o %:r.out %:t && ./%:r.out && rm ./%:r.out'
+            exec '!g++ -Wall -std=c++11 -o %:r.out %:t && ./%:r.out '. cmd_suffix. '&& rm ./%:r.out'
         endif
     elseif &filetype == 'objc'
         if g:isMAC
@@ -581,7 +596,7 @@ func! Compile_Run_Code()
             exec '!go build %:t && ./%:r'
         endif
     elseif &filetype == 'java'
-        exec '!javac %:t && java %:r && rm %:r.class'
+        exec '!javac %:t && java %:r '. cmd_suffix .' && rm %:r.class'
     elseif &filetype == 'groovy'
         exec '!groovy %:t'
     elseif &filetype == 'scala'
@@ -593,7 +608,7 @@ func! Compile_Run_Code()
     elseif &filetype == 'php'
         exec '!php %:t'
     elseif &filetype == 'python'
-        exec '!/usr/bin/env python %:t'
+        exec '!/usr/bin/env python %:t' . cmd_suffix
     elseif &filetype == 'ruby'
         exec '!ruby %:t'
     elseif &filetype == 'javascript'
@@ -608,12 +623,12 @@ func! Compile_Run_Code()
 endfunc
 
 " run and compile
-imap <F5> <esc>:call Compile_Run_Code()<cr>
-nmap <F5> :call Compile_Run_Code()<cr>
-vmap <F5> <esc>:call Compile_Run_Code()<cr>
-nmap <leader>rr :call Compile_Run_Code()<cr>
-
-
+imap <F5> <esc>:call Compile_Run_Code(g:input_mode)<cr>
+nmap <F5> :call Compile_Run_Code(g:input_mode)<cr>
+vmap <F5> <esc>:call Compile_Run_Code(g:input_mode)<cr>
+nmap <leader>rr :call Compile_Run_Code(g:input_mode)<cr>
+nmap <leader>ri :call Compile_Run_Code(0)<cr>
+nmap <leader>rf :call Compile_Run_Code(1)<cr>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -702,5 +717,3 @@ hi Todo             ctermfg=74      ctermbg=234     cterm=inverse   guifg=#5FAFD
 hi Type             ctermfg=123     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
 
 """}}}
-
-
