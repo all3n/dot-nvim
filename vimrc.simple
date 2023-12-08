@@ -8,6 +8,8 @@ let g:netrw_winsize = 15
 let g:netrw_split = 0
 let g:netrw_liststyle = 3
 let g:input_mode = 0
+let g:use_plugin = 0
+let g:use_inner_theme = 1
 
 set clipboard=unnamed,unnamedplus
 set mouse=a
@@ -75,13 +77,16 @@ function! IsVisualStudio()
     return 0
 endfunction
 " OS TYPE
+let g:lib_ext = ".so"
 if(has('win32') || has('win64'))
-    let g:isWIN = 1
-    let g:isMAC = 0
+let g:isWIN = 1
+let g:isMAC = 0
+let g:lib_ext = ".dll"
 else
     if system('uname') =~ 'Darwin'
         let g:isWIN = 0
         let g:isMAC = 1
+        let g:lib_ext = ".dylib"
     else
         let g:isWIN = 0
         let g:isMAC = 0
@@ -95,9 +100,15 @@ if g:isWIN
         set undofile
     catch
     endtry
+    if filereadable(expand("~/vimfiles/config.local.vim"))
+        source ~/vimfiles/config.local.vim
+    endif
 else
     set undofile
     set undodir=~/.vim/undo-dir
+    if filereadable(expand("~/.vim/config.local.vim"))
+        source ~/.vim/config.local.vim
+    endif
 end
 
 
@@ -248,6 +259,14 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+
+
+" split  quick resize
+nnoremap <C-S-Up>    :resize +5<CR>
+nnoremap <C-S-Down>  :resize -5<CR>
+nnoremap <C-S-Left>  :vertical resize +5<CR>
+nnoremap <C-S-Right> :vertical resize -5<CR>
+
 
 " Close the current buffer
 map <leader>bd :Bclose<cr>
@@ -562,14 +581,16 @@ autocmd InsertEnter * se cul
 if g:isWIN && v:progname =~? 'VisualStudio'
 
 else
-    function! CleverTab()
-        if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
-            return "\<Tab>"
-        else
-            return "\<C-N>"
-        endif
-    endfunction
-    inoremap <Tab> <C-R>=CleverTab()<CR>
+    if g:use_plugin == 0
+        function! CleverTab()
+            if strpart( getline('.'), 0, col('.')-1 ) =~ '^\s*$'
+                return "\<Tab>"
+            else
+                return "\<C-N>"
+            endif
+        endfunction
+        inoremap <Tab> <C-R>=CleverTab()<CR>
+    endif
 endif
 
 
@@ -644,97 +665,143 @@ endfunc
 nmap <leader>rr :call Compile_Run_Code(g:input_mode)<cr>
 nmap <leader>ri :call Compile_Run_Code(0)<cr>
 nmap <leader>rf :call Compile_Run_Code(1)<cr>
-nmap <leader>b :make<cr>
+nmap <leader>b :make<cr><C-w>
 nmap <leader>cn :cn<cr>
 nmap <leader>cp :cp<cr>
 nmap <leader>cw :cw 10<cr>
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow
+" autocmd QuickFixCmdPost * :copen
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " {{{ Color Schema http://vimcolors.com/596/minimalist/dark
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set background=dark
-if version > 580
-    "    hi clear
-    if exists("syntax_on")
-        syntax reset
+if g:use_inner_theme
+    set background=dark
+    if version > 580
+        "    hi clear
+        if exists("syntax_on")
+            syntax reset
+        endif
     endif
+    set t_Co=256
+    let g:colors_name = "minimalist"
+
+    hi User1 ctermfg=white  ctermbg=35
+    hi User2 ctermfg=51  ctermbg=35
+    hi User3 ctermfg=11  ctermbg=35
+    hi User4 ctermfg=11  ctermbg=31
+    hi User5 ctermfg=11  ctermbg=32
+    hi User7 ctermfg=white  ctermbg=36  cterm=bold
+    hi User8 ctermfg=white  ctermbg=33
+    hi User9 ctermfg=white  ctermbg=34
+    hi User0 ctermfg=yellow  ctermbg=35
+
+
+
+    """""""""""""""""""""""
+    " General
+    """""""""""""""""""""""
+    hi ColorColumn      ctermfg=NONE    ctermbg=233     cterm=NONE      guifg=NONE          guibg=#121212   gui=NONE
+    hi Cursor           ctermfg=234     ctermbg=255     cterm=NONE      guifg=#1C1C1C       guibg=#EEEEEE   gui=NONE
+    hi CursorColumn     ctermfg=NONE    ctermbg=233     cterm=NONE      guifg=NONE          guibg=#121212   gui=NONE
+    hi CursorLine       ctermfg=NONE    ctermbg=240     cterm=NONE      guifg=NONE          guibg=#121212   gui=NONE
+    hi DiffAdd          ctermfg=255     ctermbg=64      cterm=bold      guifg=#EEEEEE       guibg=#5F8700   gui=bold
+    hi DiffChange       ctermfg=NONE    ctermbg=NONE    cterm=NONE      guifg=NONE          guibg=NONE      gui=NONE
+    hi DiffDelete       ctermfg=167     ctermbg=NONE    cterm=NONE      guifg=#D75F5F       guibg=NONE      gui=NONE
+    hi DiffText         ctermfg=255     ctermbg=24      cterm=bold      guifg=#EEEEEE       guibg=#005F87   gui=bold
+    hi Directory        ctermfg=179     ctermbg=NONE    cterm=NONE      guifg=#D7AF5F       guibg=NONE      gui=NONE
+    hi ErrorMsg         ctermfg=255     ctermbg=167     cterm=NONE      guifg=#EEEEEE       guibg=#D75F5F   gui=NONE
+    hi Folded           ctermfg=242     ctermbg=234     cterm=NONE      guifg=#666666       guibg=#1C1C1C   gui=NONE
+    hi IncSearch        ctermfg=234     ctermbg=75      cterm=NONE      guifg=#1C1C1C       guibg=#5FAFFF   gui=NONE
+    hi LineNr           ctermfg=254      ctermbg=235     cterm=NONE      guifg=#5F5F5F       guibg=#262626   gui=NONE
+    hi MatchParen       ctermfg=NONE    ctermbg=NONE    cterm=underline guifg=NONE          guibg=NONE      gui=underline
+    hi NonText          ctermfg=234     ctermbg=234     cterm=NONE      guifg=#1C1C1C       guibg=#1C1C1C   gui=NONE
+    hi Normal           ctermfg=255     ctermbg=234     cterm=NONE      guifg=#EEEEEE       guibg=#1C1C1C   gui=NONE
+    hi Pmenu            ctermfg=NONE    ctermbg=NONE    cterm=NONE      guifg=NONE          guibg=NONE      gui=NONE
+    hi PmenuSel         ctermfg=NONE    ctermbg=59      cterm=NONE      guifg=NONE          guibg=#5F5F5F   gui=NONE
+    hi Search           ctermfg=NONE    ctermbg=NONE    cterm=underline guifg=NONE          guibg=NONE      gui=underline
+    hi SignColumn       ctermfg=NONE    ctermbg=237     cterm=NONE      guifg=NONE          guibg=#3A3A3A   gui=NONE
+    hi StatusLine       ctermfg=255     ctermbg=241     cterm=bold      guifg=#EEEEEE       guibg=#606060   gui=bold
+    hi StatusLineNC     ctermfg=255     ctermbg=241     cterm=NONE      guifg=#EEEEEE       guibg=#606060   gui=NONE
+    hi Title            ctermfg=255     ctermbg=NONE    cterm=NONE      guifg=#EEEEEE       guibg=NONE      gui=NONE
+    hi Underlined       ctermfg=NONE    ctermbg=NONE    cterm=NONE      guifg=NONE          guibg=NONE      gui=NONE
+    hi VertSplit        ctermfg=241     ctermbg=241     cterm=NONE      guifg=#606060       guibg=#606060   gui=NONE
+    hi Visual           ctermfg=NONE    ctermbg=246     cterm=NONE      guifg=NONE          guibg=#303030   gui=NONE
+    hi WarningMsg       ctermfg=255     ctermbg=167     cterm=NONE      guifg=#EEEEEE       guibg=#D75F5F   gui=NONE
+
+    """""""""""""""""""""""
+    " Syntax Highlighting
+    """""""""""""""""""""""
+    hi Boolean          ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#D7875F       guibg=NONE      gui=NONE
+    hi Character        ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Comment          ctermfg=41     ctermbg=NONE    cterm=NONE      guifg=#444444       guibg=NONE      gui=NONE
+    hi Conditional      ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Constant         ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Define           ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Float            ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Function         ctermfg=74      ctermbg=NONE    cterm=NONE      guifg=#5FAFD7       guibg=NONE      gui=NONE
+    hi Identifier       ctermfg=255     ctermbg=NONE    cterm=NONE      guifg=#EEEEEE       guibg=NONE      gui=italic
+    hi Keyword          ctermfg=14     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Label            ctermfg=186     ctermbg=NONE    cterm=NONE      guifg=#D7D787       guibg=NONE      gui=NONE
+    hi Number           ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#D7875F       guibg=NONE      gui=NONE
+    hi Operator         ctermfg=117     ctermbg=NONE    cterm=NONE      guifg=#87D7FF       guibg=NONE      gui=NONE
+    hi PreProc          ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Repeat           ctermfg=153     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Special          ctermfg=117     ctermbg=NONE    cterm=NONE      guifg=#87D7FF       guibg=NONE      gui=NONE
+    hi SpecialComment   ctermfg=242     ctermbg=NONE    cterm=NONE      guifg=#666666       guibg=NONE      gui=NONE
+    hi SpecialKey       ctermfg=59      ctermbg=237     cterm=NONE      guifg=#5F5F5F       guibg=#3A3A3A   gui=NONE
+    hi Statement        ctermfg=87     ctermbg=NONE    cterm=NONE      guifg=#D75F5F       guibg=NONE      gui=NONE
+    hi StorageClass     ctermfg=215     ctermbg=NONE    cterm=NONE      guifg=#FFAF5F       guibg=NONE      gui=italic
+    hi String           ctermfg=10     ctermbg=NONE    cterm=NONE      guifg=#AFD787       guibg=NONE      gui=NONE
+    hi Structure        ctermfg=215     ctermbg=NONE    cterm=NONE      guifg=#FFAF5F       guibg=NONE      gui=NONE
+    hi Tag              ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+    hi Todo             ctermfg=74      ctermbg=234     cterm=inverse   guifg=#5FAFD7       guibg=#1C1C1C   gui=inverse,bold
+    hi Type             ctermfg=123     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
+
 endif
-set t_Co=256
-let g:colors_name = "minimalist"
-
-hi User1 ctermfg=white  ctermbg=35
-hi User2 ctermfg=51  ctermbg=35
-hi User3 ctermfg=11  ctermbg=35
-hi User4 ctermfg=11  ctermbg=31
-hi User5 ctermfg=11  ctermbg=32
-hi User7 ctermfg=white  ctermbg=36  cterm=bold
-hi User8 ctermfg=white  ctermbg=33
-hi User9 ctermfg=white  ctermbg=34
-hi User0 ctermfg=yellow  ctermbg=35
-
-
-
-"""""""""""""""""""""""
-" General
-"""""""""""""""""""""""
-hi ColorColumn      ctermfg=NONE    ctermbg=233     cterm=NONE      guifg=NONE          guibg=#121212   gui=NONE
-hi Cursor           ctermfg=234     ctermbg=255     cterm=NONE      guifg=#1C1C1C       guibg=#EEEEEE   gui=NONE
-hi CursorColumn     ctermfg=NONE    ctermbg=233     cterm=NONE      guifg=NONE          guibg=#121212   gui=NONE
-hi CursorLine       ctermfg=NONE    ctermbg=240     cterm=NONE      guifg=NONE          guibg=#121212   gui=NONE
-hi DiffAdd          ctermfg=255     ctermbg=64      cterm=bold      guifg=#EEEEEE       guibg=#5F8700   gui=bold
-hi DiffChange       ctermfg=NONE    ctermbg=NONE    cterm=NONE      guifg=NONE          guibg=NONE      gui=NONE
-hi DiffDelete       ctermfg=167     ctermbg=NONE    cterm=NONE      guifg=#D75F5F       guibg=NONE      gui=NONE
-hi DiffText         ctermfg=255     ctermbg=24      cterm=bold      guifg=#EEEEEE       guibg=#005F87   gui=bold
-hi Directory        ctermfg=179     ctermbg=NONE    cterm=NONE      guifg=#D7AF5F       guibg=NONE      gui=NONE
-hi ErrorMsg         ctermfg=255     ctermbg=167     cterm=NONE      guifg=#EEEEEE       guibg=#D75F5F   gui=NONE
-hi Folded           ctermfg=242     ctermbg=234     cterm=NONE      guifg=#666666       guibg=#1C1C1C   gui=NONE
-hi IncSearch        ctermfg=234     ctermbg=75      cterm=NONE      guifg=#1C1C1C       guibg=#5FAFFF   gui=NONE
-hi LineNr           ctermfg=254      ctermbg=235     cterm=NONE      guifg=#5F5F5F       guibg=#262626   gui=NONE
-hi MatchParen       ctermfg=NONE    ctermbg=NONE    cterm=underline guifg=NONE          guibg=NONE      gui=underline
-hi NonText          ctermfg=234     ctermbg=234     cterm=NONE      guifg=#1C1C1C       guibg=#1C1C1C   gui=NONE
-hi Normal           ctermfg=255     ctermbg=234     cterm=NONE      guifg=#EEEEEE       guibg=#1C1C1C   gui=NONE
-hi Pmenu            ctermfg=NONE    ctermbg=NONE    cterm=NONE      guifg=NONE          guibg=NONE      gui=NONE
-hi PmenuSel         ctermfg=NONE    ctermbg=59      cterm=NONE      guifg=NONE          guibg=#5F5F5F   gui=NONE
-hi Search           ctermfg=NONE    ctermbg=NONE    cterm=underline guifg=NONE          guibg=NONE      gui=underline
-hi SignColumn       ctermfg=NONE    ctermbg=237     cterm=NONE      guifg=NONE          guibg=#3A3A3A   gui=NONE
-hi StatusLine       ctermfg=255     ctermbg=241     cterm=bold      guifg=#EEEEEE       guibg=#606060   gui=bold
-hi StatusLineNC     ctermfg=255     ctermbg=241     cterm=NONE      guifg=#EEEEEE       guibg=#606060   gui=NONE
-hi Title            ctermfg=255     ctermbg=NONE    cterm=NONE      guifg=#EEEEEE       guibg=NONE      gui=NONE
-hi Underlined       ctermfg=NONE    ctermbg=NONE    cterm=NONE      guifg=NONE          guibg=NONE      gui=NONE
-hi VertSplit        ctermfg=241     ctermbg=241     cterm=NONE      guifg=#606060       guibg=#606060   gui=NONE
-hi Visual           ctermfg=NONE    ctermbg=246     cterm=NONE      guifg=NONE          guibg=#303030   gui=NONE
-hi WarningMsg       ctermfg=255     ctermbg=167     cterm=NONE      guifg=#EEEEEE       guibg=#D75F5F   gui=NONE
-
-"""""""""""""""""""""""
-" Syntax Highlighting
-"""""""""""""""""""""""
-hi Boolean          ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#D7875F       guibg=NONE      gui=NONE
-hi Character        ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Comment          ctermfg=41     ctermbg=NONE    cterm=NONE      guifg=#444444       guibg=NONE      gui=NONE
-hi Conditional      ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Constant         ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Define           ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Float            ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Function         ctermfg=74      ctermbg=NONE    cterm=NONE      guifg=#5FAFD7       guibg=NONE      gui=NONE
-hi Identifier       ctermfg=255     ctermbg=NONE    cterm=NONE      guifg=#EEEEEE       guibg=NONE      gui=italic
-hi Keyword          ctermfg=14     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Label            ctermfg=186     ctermbg=NONE    cterm=NONE      guifg=#D7D787       guibg=NONE      gui=NONE
-hi Number           ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#D7875F       guibg=NONE      gui=NONE
-hi Operator         ctermfg=117     ctermbg=NONE    cterm=NONE      guifg=#87D7FF       guibg=NONE      gui=NONE
-hi PreProc          ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Repeat           ctermfg=153     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Special          ctermfg=117     ctermbg=NONE    cterm=NONE      guifg=#87D7FF       guibg=NONE      gui=NONE
-hi SpecialComment   ctermfg=242     ctermbg=NONE    cterm=NONE      guifg=#666666       guibg=NONE      gui=NONE
-hi SpecialKey       ctermfg=59      ctermbg=237     cterm=NONE      guifg=#5F5F5F       guibg=#3A3A3A   gui=NONE
-hi Statement        ctermfg=87     ctermbg=NONE    cterm=NONE      guifg=#D75F5F       guibg=NONE      gui=NONE
-hi StorageClass     ctermfg=215     ctermbg=NONE    cterm=NONE      guifg=#FFAF5F       guibg=NONE      gui=italic
-hi String           ctermfg=10     ctermbg=NONE    cterm=NONE      guifg=#AFD787       guibg=NONE      gui=NONE
-hi Structure        ctermfg=215     ctermbg=NONE    cterm=NONE      guifg=#FFAF5F       guibg=NONE      gui=NONE
-hi Tag              ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-hi Todo             ctermfg=74      ctermbg=234     cterm=inverse   guifg=#5FAFD7       guibg=#1C1C1C   gui=inverse,bold
-hi Type             ctermfg=123     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
 
 """}}}
+
+if has("terminal")
+    command Terminal botright terminal ++rows=10
+    nnoremap <C-t><C-t> :Terminal<cr>
+endif
+
+
+if g:use_plugin
+    let g:plug_url_format = "https://hproxy.all3n.top/https://github.com/%s.git"
+    call plug#begin()
+    Plug 'ryanoasis/vim-devicons'
+    Plug 'scrooloose/nerdcommenter'
+    " Plug 'vim-airline/vim-airline'
+    " Plug 'vim-airline/vim-airline-themes'
+    " find plugins
+    Plug 'kien/ctrlp.vim'
+
+    " snip
+    if v:version < 703
+        " only 5.0.0 compatible for 7.2
+        Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle', 'tag': '5.0.0' }
+        " Plug 'SirVer/ultisnips', {'tag' : '3.0'}
+        " v2.7 for 7.0
+        Plug 'preservim/tagbar', {'tag': 'v2.7'}
+    elseif v:version > 800
+        Plug 'preservim/nerdtree'
+        Plug 'SirVer/ultisnips'
+        Plug 'honza/vim-snippets'
+        Plug 'preservim/tagbar'
+        Plug 'neoclide/coc.nvim', {'branch': 'release'}
+        Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
+    endif
+
+
+    Plug 'vim-scripts/a.vim'
+    Plug 'ervandew/supertab'
+    call plug#end()
+    map <leader>e :NERDTreeToggle<cr>
+    map <leader>tt :TagbarToggle<cr>
+    map <leader>th :A<cr>
+    nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+endif
