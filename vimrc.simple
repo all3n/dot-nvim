@@ -6,8 +6,8 @@ set history=1000
 
 let g:netrw_winsize = 15
 let g:netrw_split = 0
+let g:netrw_liststyle = 3
 let g:input_mode = 0
-
 
 set clipboard=unnamed,unnamedplus
 set mouse=a
@@ -88,6 +88,19 @@ else
     endif
 endif
 
+
+if g:isWIN
+    try
+        set undodir=C:\undodir
+        set undofile
+    catch
+    endtry
+else
+    set undofile
+    set undodir=~/.vim/undo-dir
+end
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -97,6 +110,7 @@ set so=7
 " Turn on the WiLd menu
 set wildmenu
 set wildmode=list:full
+
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
@@ -213,8 +227,7 @@ vnoremap > >gv
 
 " common map
 map <leader>ax :!chmod a+x %<cr><cr>
-set pastetoggle=<F4>
-map <leader>tp <F4>
+set pastetoggle=<leader>tp
 map <leader>f ggVG=
 map <F6> ggVG=
 
@@ -563,6 +576,9 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Compile Run
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType c   set makeprg=gcc\ -x\ c\ -g\ -O2\ -std=c11\ -o\ %:r.out\ %:t
+autocmd FileType cpp   set makeprg=g++\ -x\ c++\ -g\ -O2\ -std=c++17\ -o\ %:r.out\ %:t
+
 func! Compile_Run_Code(is_input)
     exec 'w'
     let cmd_suffix = ''
@@ -570,16 +586,18 @@ func! Compile_Run_Code(is_input)
         let cmd_suffix = cmd_suffix . '< ./%:r.txt'
     endif
     if &filetype == 'c'
+        let cflags = '-Wall -x c -g -O2 -std=c11'
         if g:isWIN
-            exec '!gcc -Wall -std=c11 -o %:r %:t && %:r.exe ' . cmd_suffix
+            exec '!gcc '. cflags .' -o %:r %:t -lm && %:r.exe ' . cmd_suffix
         else
-            exec '!gcc -Wall -std=c11 -o %:r.out %:t && ./%:r.out ' . cmd_suffix . ' && rm ./%:r.out'
+            exec '!gcc ' .cflags. ' -o %:r.out %:t -lm && ./%:r.out ' . cmd_suffix . ' && rm ./%:r.out'
         endif
     elseif &filetype == 'cpp'
+        let cxxflags = "-Wall -x c++ -g -O2 -std=c++17"
         if g:isWIN
-            exec '!g++ -Wall -std=c++11 -o %:r %:t && %:r.exe' . cmd_suffix
+            exec '!g++ ' . cxxflags. ' -o %:r %:t && %:r.exe' . cmd_suffix
         else
-            exec '!g++ -Wall -std=c++11 -o %:r.out %:t && ./%:r.out '. cmd_suffix. '&& rm ./%:r.out'
+            exec '!g++ ' . cxxflags. ' -o %:r.out %:t && ./%:r.out '. cmd_suffix. '&& rm ./%:r.out'
         endif
     elseif &filetype == 'objc'
         if g:isMAC
@@ -623,12 +641,15 @@ func! Compile_Run_Code(is_input)
 endfunc
 
 " run and compile
-imap <F5> <esc>:call Compile_Run_Code(g:input_mode)<cr>
-nmap <F5> :call Compile_Run_Code(g:input_mode)<cr>
-vmap <F5> <esc>:call Compile_Run_Code(g:input_mode)<cr>
 nmap <leader>rr :call Compile_Run_Code(g:input_mode)<cr>
 nmap <leader>ri :call Compile_Run_Code(0)<cr>
 nmap <leader>rf :call Compile_Run_Code(1)<cr>
+nmap <leader>b :make<cr>
+nmap <leader>cn :cn<cr>
+nmap <leader>cp :cp<cr>
+nmap <leader>cw :cw 10<cr>
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
