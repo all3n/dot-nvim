@@ -3,44 +3,34 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
 set history=1000
-
 let g:netrw_winsize = 15
 let g:netrw_split = 0
 let g:netrw_liststyle = 3
 let g:input_mode = 0
 let g:use_plugin = 0
 let g:use_inner_theme = 1
-
+let g:use_coc = 0
 set clipboard=unnamed,unnamedplus
 set mouse=a
-
 " Enable filetype plugins
 filetype plugin on
 filetype indent on
 set nocompatible
-
 " Set to auto read when a file is changed from the outside
 set autoread
-
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
-
 " Fast saving
 nmap <leader>w :w!<cr>
-
 cmap w!! w !sudo tee % >/dev/null
-
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
 scriptencoding utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,latin1
-
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM ENV
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -66,7 +56,6 @@ au BufRead,BufNewFile *.conf     setlocal ft=dosini
 au BufRead,BufNewFile http*.conf setlocal ft=apache
 au BufRead,BufNewFile nginx.conf setlocal ft=nginx
 au BufRead,BufNewFile *.ini      setlocal ft=dosini
-
 function! IsVisualStudio()
     if has('gui_running') && has('termguicolors')
         let editor = $TERM_PROGRAM
@@ -79,9 +68,10 @@ endfunction
 " OS TYPE
 let g:lib_ext = ".so"
 if(has('win32') || has('win64'))
-let g:isWIN = 1
-let g:isMAC = 0
-let g:lib_ext = ".dll"
+    let g:isWIN = 1
+    let g:isMAC = 0
+    let g:lib_ext = ".dll"
+    " set shell=pwsh
 else
     if system('uname') =~ 'Darwin'
         let g:isWIN = 0
@@ -92,8 +82,6 @@ else
         let g:isMAC = 0
     endif
 endif
-
-
 if g:isWIN
     try
         set undodir=C:\undodir
@@ -110,87 +98,62 @@ else
         source ~/.vim/config.local.vim
     endif
 end
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
-
 " Turn on the WiLd menu
 set wildmenu
 set wildmode=list:full
-
-
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
-
 "Always show current position
 set ruler
-
 " Height of the command bar
 set cmdheight=2
-
 " A buffer becomes hidden when it is abandoned
 set hid
-
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
-
 " Ignore case when searching
 set ignorecase
-
 " When searching try to be smart about cases
 set smartcase
-
 " Highlight search results
 set hlsearch
-
 " Makes search act like search in modern browsers
 set incsearch
-
 " Don't redraw while executing macros (good performance config)
 set lazyredraw
-
 " For regular expressions turn magic on
 set magic
-
 " Show matching brackets when text indicator is over them
 set showmatch
 " How many tenths of a second to blink when matching brackets
 set mat=2
-
 " No annoying sound on errors
 set noerrorbells
 set novisualbell
 set t_vb=
 set tm=500
-
 " cursor line & column
 set cursorline
 set cursorcolumn
-
-
 " show tab
 set list
 set listchars=tab:›\ ,trail:•,extends:#,nbsp:.
-
-
 set nospell
 set number
 "set foldenable
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
-
 colorscheme desert
 set background=dark
-
 " Set extra options when running in GUI mode
 if has("gui_running")
     set guioptions-=T
@@ -198,13 +161,10 @@ if has("gui_running")
     set t_Co=256
     set guitablabel=%M\ %t
 endif
-
-
 " file
 set nobackup
 set nowb
 set noswapfile
-
 " tab
 " Use spaces instead of tabs
 set expandtab
@@ -213,16 +173,12 @@ set smarttab
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
-
 " Linebreak on 500 characters
 set lbr
 set tw=500
-
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
-
-
 """"""""""""""""""""""""""""""
 " => Visual mode related
 """"""""""""""""""""""""""""""
@@ -230,73 +186,54 @@ set wrap "Wrap lines
 " Super useful! From an idea by Michael Naumann
 vnoremap <silent> * :call VisualSelection('f')<CR>
 vnoremap <silent> # :call VisualSelection('b')<CR>
-
 " visual shift
 vnoremap < <gv
 vnoremap > >gv
-
-
 " common map
 map <leader>ax :!chmod a+x %<cr><cr>
 set pastetoggle=<leader>tp
 map <leader>f ggVG=
 map <F6> ggVG=
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Treat long lines as break lines (useful when moving around in them)
 map j gj
 map k gk
-
-
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
-
 " Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
-
-
 " split  quick resize
-nnoremap <C-S-Up>    :resize +5<CR>
-nnoremap <C-S-Down>  :resize -5<CR>
-nnoremap <C-S-Left>  :vertical resize +5<CR>
-nnoremap <C-S-Right> :vertical resize -5<CR>
-
-
+nnoremap <S-Up>    :resize +5<CR>
+nnoremap <S-Down>  :resize -5<CR>
+nnoremap <S-Left>  :vertical resize +5<CR>
+nnoremap <S-Right> :vertical resize -5<CR>
 " Close the current buffer
 map <leader>bd :Bclose<cr>
-
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
-
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
-
 nnoremap <S-h> :tabprev<CR>
 nnoremap <S-l> :tabnext<CR>
-
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
 map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
-
 " Specify the behavior when switching between buffers
 try
     set switchbuf=useopen,usetab,newtab
     set stal=2
 catch
 endtry
-
 " Return to last edit position when opening files (You want this!)
 autocmd BufReadPost *
             \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -304,16 +241,12 @@ autocmd BufReadPost *
             \ endif
 " Remember info about open buffers on close
 set viminfo^=%
-
-
 """"""""""""""""""""""""""""""
 " => Status line
 """"""""""""""""""""""""""""""
 " Always show the status line
-set laststatus=2
-
+" set laststatus=2
 " Format the status line
-
 set statusline=
 set statusline+=%1*\ %<%F\                                "文件路径
 set statusline+=%7*\[%{ModeInfo()}]                       "文件路径
@@ -333,27 +266,22 @@ function! HighlightSearch()
         return ''
     endif
 endfunction
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remap VIM 0 to first non-blank character
 map 0 ^
-
 " Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
 if has("mac") || has("macunix")
     nmap <D-j> <M-j>
     nmap <D-k> <M-k>
     vmap <D-j> <M-j>
     vmap <D-k> <M-k>
 endif
-
 " Delete trailing white space on save, useful for Python and CoffeeScript ;)
 func! DeleteTrailingWS()
     exe "normal mz"
@@ -363,7 +291,6 @@ endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
 nmap <leader>cs :call DeleteTrailingWS()<cr>
-
 " toggle comment
 let s:comment_map = {
             \   "c": '\/\/',
@@ -391,7 +318,6 @@ let s:comment_map = {
             \   "vim": '"',
             \   "tex": '%',
             \ }
-
 function! ToggleComment()
     if has_key(s:comment_map, &filetype)
         let comment_leader = s:comment_map[&filetype]
@@ -411,27 +337,19 @@ function! ToggleComment()
         echo "No comment leader found for filetype"
     end
 endfunction
-
-
 nnoremap <leader><Space> :call ToggleComment()<cr>
 vnoremap <leader><Space> :call ToggleComment()<cr>
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => vimgrep searching and cope displaying
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " When you press gv you vimgrep after the selected text
 " vnoremap <silent> gv :call VisualSelection('gv')<CR>
-
 " Open vimgrep and put the cursor in the right position
 "map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
-
 " Vimgreps in the current file
 "map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
-
 " When you press <leader>r you can search and replace the selected text
 " vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
-
 " Do :help cope if you are unsure what cope is. It's super useful!
 "
 " When you search with vimgrep, display your results in cope by doing:
@@ -447,39 +365,29 @@ vnoremap <leader><Space> :call ToggleComment()<cr>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
-
 " Shortcuts using <leader>
 map <leader>sn ]s
 map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-
-
 " Quickly open a buffer for scripbble
 map <leader>q :wq!<cr>
-
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 " replace all tab to space
-map <leader>tt :%retab!<cr>
+map <leader>tr :%retab!<cr>
 " open inner explore in left side
 map <leader>e :Lexplore<cr>
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -488,14 +396,11 @@ function! CmdLine(str)
     emenu Foo.Bar
     unmenu Foo
 endfunction
-
 function! VisualSelection(direction) range
     let l:saved_reg = @"
     execute "normal! vgvy"
-
     let l:pattern = escape(@", '\\/.*$^~[]')
     let l:pattern = substitute(l:pattern, "\n$", "", "")
-
     if a:direction == 'b'
         execute "normal ?" . l:pattern . "^M"
     elseif a:direction == 'gv'
@@ -505,12 +410,9 @@ function! VisualSelection(direction) range
     elseif a:direction == 'f'
         execute "normal /" . l:pattern . "^M"
     endif
-
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
-
-
 " Returns true if paste mode is enabled
 function! HasPaste()
     if &paste
@@ -518,7 +420,6 @@ function! HasPaste()
     en
     return ''
 endfunction
-
 " model info
 function! ModeInfo()
     let m = mode()
@@ -542,44 +443,34 @@ function! ModeInfo()
         return md
     endif
 endfunction
-
 " Don't close window, when deleting a buffer
 command! Bclose call <SID>BufcloseCloseIt()
 function! <SID>BufcloseCloseIt()
     let l:currentBufNum = bufnr("%")
     let l:alternateBufNum = bufnr("#")
-
     if buflisted(l:alternateBufNum)
         buffer #
     else
         bnext
     endif
-
     if bufnr("%") == l:currentBufNum
         new
     endif
-
     if buflisted(l:currentBufNum)
         execute("bdelete! ".l:currentBufNum)
     endif
 endfunction
-
 autocmd InsertLeave * se nocul
 autocmd InsertEnter * se cul
-
-
-
 " fold setting
 " set foldmethod=syntax
 " set foldmethod=marker
 " set foldmarker={,}
 " set foldlevel=0
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Clever Tab tips
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if g:isWIN && v:progname =~? 'VisualStudio'
-
 else
     if g:use_plugin == 0
         function! CleverTab()
@@ -592,14 +483,11 @@ else
         inoremap <Tab> <C-R>=CleverTab()<CR>
     endif
 endif
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Compile Run
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType c   set makeprg=gcc\ -x\ c\ -g\ -O2\ -std=c11\ -o\ %:r.out\ %:t
 autocmd FileType cpp   set makeprg=g++\ -x\ c++\ -g\ -O2\ -std=c++17\ -o\ %:r.out\ %:t
-
 func! Compile_Run_Code(is_input)
     exec 'w'
     let cmd_suffix = ''
@@ -616,7 +504,7 @@ func! Compile_Run_Code(is_input)
     elseif &filetype == 'cpp'
         let cxxflags = "-Wall -x c++ -g -O2 -std=c++17"
         if g:isWIN
-            exec '!g++ ' . cxxflags. ' -o %:r %:t && %:r.exe' . cmd_suffix
+            exec '!g++ ' . cxxflags. ' -static-libstdc++ -o %:r %:t && %:r.exe' . cmd_suffix
         else
             exec '!g++ ' . cxxflags. ' -o %:r.out %:t && ./%:r.out '. cmd_suffix. '&& rm ./%:r.out'
         endif
@@ -660,7 +548,6 @@ func! Compile_Run_Code(is_input)
         exec '!bash %:t'
     endif
 endfunc
-
 " run and compile
 nmap <leader>rr :call Compile_Run_Code(g:input_mode)<cr>
 nmap <leader>ri :call Compile_Run_Code(0)<cr>
@@ -672,8 +559,6 @@ nmap <leader>cw :cw 10<cr>
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow
 " autocmd QuickFixCmdPost * :copen
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " {{{ Color Schema http://vimcolors.com/596/minimalist/dark
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -687,7 +572,6 @@ if g:use_inner_theme
     endif
     set t_Co=256
     let g:colors_name = "minimalist"
-
     hi User1 ctermfg=white  ctermbg=35
     hi User2 ctermfg=51  ctermbg=35
     hi User3 ctermfg=11  ctermbg=35
@@ -697,9 +581,6 @@ if g:use_inner_theme
     hi User8 ctermfg=white  ctermbg=33
     hi User9 ctermfg=white  ctermbg=34
     hi User0 ctermfg=yellow  ctermbg=35
-
-
-
     """""""""""""""""""""""
     " General
     """""""""""""""""""""""
@@ -730,7 +611,6 @@ if g:use_inner_theme
     hi VertSplit        ctermfg=241     ctermbg=241     cterm=NONE      guifg=#606060       guibg=#606060   gui=NONE
     hi Visual           ctermfg=NONE    ctermbg=246     cterm=NONE      guifg=NONE          guibg=#303030   gui=NONE
     hi WarningMsg       ctermfg=255     ctermbg=167     cterm=NONE      guifg=#EEEEEE       guibg=#D75F5F   gui=NONE
-
     """""""""""""""""""""""
     " Syntax Highlighting
     """""""""""""""""""""""
@@ -759,17 +639,12 @@ if g:use_inner_theme
     hi Tag              ctermfg=39     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
     hi Todo             ctermfg=74      ctermbg=234     cterm=inverse   guifg=#5FAFD7       guibg=#1C1C1C   gui=inverse,bold
     hi Type             ctermfg=123     ctermbg=NONE    cterm=NONE      guifg=#AF87D7       guibg=NONE      gui=NONE
-
 endif
-
 """}}}
-
 if has("terminal")
-    command Terminal botright terminal ++rows=10
-    nnoremap <C-t><C-t> :Terminal<cr>
+    command! Terminal botright terminal ++rows=10
+    nnoremap <leader>rt :Terminal<cr>
 endif
-
-
 if g:use_plugin
     let g:plug_url_format = "https://hproxy.all3n.top/https://github.com/%s.git"
     call plug#begin()
@@ -779,7 +654,6 @@ if g:use_plugin
     " Plug 'vim-airline/vim-airline-themes'
     " find plugins
     Plug 'kien/ctrlp.vim'
-
     " snip
     if v:version < 703
         " only 5.0.0 compatible for 7.2
@@ -789,19 +663,122 @@ if g:use_plugin
         Plug 'preservim/tagbar', {'tag': 'v2.7'}
     elseif v:version > 800
         Plug 'preservim/nerdtree'
-        Plug 'SirVer/ultisnips'
-        Plug 'honza/vim-snippets'
-        Plug 'preservim/tagbar'
-        Plug 'neoclide/coc.nvim', {'branch': 'release'}
+        "Plug 'SirVer/ultisnips'
+        "Plug 'honza/vim-snippets'
         Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
     endif
-
-
+    if g:use_coc
+        Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    endif
     Plug 'vim-scripts/a.vim'
     Plug 'ervandew/supertab'
     call plug#end()
     map <leader>e :NERDTreeToggle<cr>
-    map <leader>tt :TagbarToggle<cr>
     map <leader>th :A<cr>
     nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+
+    if g:use_coc
+        set signcolumn=yes
+        inoremap <silent><expr> <c-/> coc#refresh()
+        " Use `[g` and `]g` to navigate diagnostics
+        " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+        nmap <silent> [g <Plug>(coc-diagnostic-prev)
+        nmap <silent> ]g <Plug>(coc-diagnostic-next)
+        " GoTo code navigation
+        nmap <silent> gd <Plug>(coc-definition)
+        nmap <silent> gy <Plug>(coc-type-definition)
+        nmap <silent> gi <Plug>(coc-implementation)
+        nmap <silent> gr <Plug>(coc-references)
+        " Use K to show documentation in preview window
+        nnoremap <silent> K :call ShowDocumentation()<CR>
+        function! ShowDocumentation()
+          if CocAction('hasProvider', 'hover')
+            call CocActionAsync('doHover')
+          else
+            call feedkeys('K', 'in')
+          endif
+        endfunction
+        " Highlight the symbol and its references when holding the cursor
+        autocmd CursorHold * silent call CocActionAsync('highlight')
+        " Symbol renaming
+        nmap <leader>rn <Plug>(coc-rename)
+        " Formatting selected code
+        xmap <leader>f  <Plug>(coc-format-selected)
+        nmap <leader>f  <Plug>(coc-format-selected)
+        augroup mygroup
+          autocmd!
+          " Setup formatexpr specified filetype(s)
+          autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+          " Update signature help on jump placeholder
+          autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+        augroup end
+        " Applying code actions to the selected code block
+        " Example: `<leader>aap` for current paragraph
+        xmap <leader>la  <Plug>(coc-codeaction-selected)
+        nmap <leader>la  <Plug>(coc-codeaction-selected)
+        " Remap keys for applying code actions at the cursor position
+        nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+        " Remap keys for apply code actions affect whole buffer
+        nmap <leader>as  <Plug>(coc-codeaction-source)
+        " Apply the most preferred quickfix action to fix diagnostic on the current line
+        nmap <leader>qf  <Plug>(coc-fix-current)
+        " Remap keys for applying refactor code actions
+        " nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+        " xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+        " nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+        " Run the Code Lens action on the current line
+        nmap <leader>cl  <Plug>(coc-codelens-action)
+        " Map function and class text objects
+        " NOTE: Requires 'textDocument.documentSymbol' support from the language server
+        xmap if <Plug>(coc-funcobj-i)
+        omap if <Plug>(coc-funcobj-i)
+        xmap af <Plug>(coc-funcobj-a)
+        omap af <Plug>(coc-funcobj-a)
+        xmap ic <Plug>(coc-classobj-i)
+        omap ic <Plug>(coc-classobj-i)
+        xmap ac <Plug>(coc-classobj-a)
+        omap ac <Plug>(coc-classobj-a)
+        " Remap <C-f> and <C-b> to scroll float windows/popups
+        if has('nvim-0.4.0') || has('patch-8.2.0750')
+          nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+          nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+          inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+          inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+          vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+          vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+        endif
+        " Use CTRL-S for selections ranges
+        " Requires 'textDocument/selectionRange' support of language server
+        nmap <silent> <C-s> <Plug>(coc-range-select)
+        xmap <silent> <C-s> <Plug>(coc-range-select)
+        " Add `:Format` command to format current buffer
+        command! -nargs=0 Format :call CocActionAsync('format')
+        " Add `:Fold` command to fold current buffer
+        command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+        " Add `:OR` command for organize imports of the current buffer
+        command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+        " Add (Neo)Vim's native statusline support
+        " NOTE: Please see `:h coc-status` for integrations with external plugins that
+        " provide custom statusline: lightline.vim, vim-airline
+        set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+        " Mappings for CoCList
+        " Show all diagnostics
+        nnoremap <silent><nowait> <space>ld  :<C-u>CocList diagnostics<cr>
+        " Manage extensions
+        " nnoremap <silent><nowait> <space>e    :<C-u>CocList extensions<cr>
+        " Show commands
+        nnoremap <silent><nowait> <space>lc  :<C-u>CocList commands<cr>
+        " Find symbol of current document
+        nnoremap <silent><nowait> <space>lo :<C-u>CocList outline<cr>
+        " Search workspace symbols
+        nnoremap <silent><nowait> <space>ls  :<C-u>CocList -I symbols<cr>
+        " Do default action for next item
+        nnoremap <silent><nowait> <space>lj  :<C-u>CocNext<CR>
+        " Do default action for previous item
+        nnoremap <silent><nowait> <space>lk  :<C-u>CocPrev<CR>
+        " Resume latest coc list
+        nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+        nnoremap <silent><nowait> <space>lf  :Format<CR>
+        nnoremap <silent><nowait> <space>lh  :CocCommand clangd.switchSourceHeader<CR>
+    endif
 endif

@@ -1,8 +1,4 @@
 # All3n Vim/NeoVim Configs
-## NoPlugin Simple Vimrc
-```
-wget https://hproxy.all3n.top/https://raw.githubusercontent.com/all3n/dot-nvim/main/vimrc.simple -o ~/.vimrc
-```
 
 ## NeoVim Lua Full Package Install
 ```
