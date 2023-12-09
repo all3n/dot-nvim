@@ -47,7 +47,7 @@ M.header_libs = {
   ["microhttpd.h"] = { "microhttpd" },
   ["libssh2.h"] = { "ssh2" },
 }
-if cxx.search_paths then
+if cxx and cxx.search_paths then
   M.search_paths = vim.tbl_extend("force", M.search_paths, cxx.search_paths)
   local key_delete = {}
   for k, v in pairs(M.search_paths) do
@@ -63,7 +63,7 @@ if cxx.search_paths then
     M.search_paths[k] = nil
   end
 end
-if cxx.header_libs then
+if cxx and cxx.header_libs then
   M.header_libs = vim.tbl_extend("force", M.header_libs, cxx.header_libs)
 end
 local sysname = vim.loop.os_uname().sysname
