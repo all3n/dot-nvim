@@ -3,6 +3,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
 set history=1000
+
 let g:netrw_winsize = 15
 let g:netrw_split = 0
 let g:netrw_liststyle = 3
@@ -10,19 +11,20 @@ let g:input_mode = 0
 let g:use_plugin = 0
 let g:use_inner_theme = 1
 let g:use_coc = 0
+
 set clipboard=unnamed,unnamedplus
 set mouse=a
 " Enable filetype plugins
 filetype plugin on
 filetype indent on
+" set no compatible like backspace support in insert mode
 set nocompatible
 " Set to auto read when a file is changed from the outside
 set autoread
 " With a map leader it's possible to do extra key combinations
-" like <leader>w saves the current file
 let mapleader = "\<Space>"
 let g:mapleader = "\<Space>"
-" Fast saving
+" like <leader>w saves the current file
 nmap <leader>w :w!<cr>
 cmap w!! w !sudo tee % >/dev/null
 " Set utf8 as standard encoding and en_US as the standard language
@@ -31,10 +33,7 @@ scriptencoding utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,latin1
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM ENV
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" file type
+" file type special filetype
 au BufRead,BufNewFile *.h        setlocal ft=c
 au BufRead,BufNewFile *.cc        setlocal ft=cpp
 au BufRead,BufNewFile *.cu        setlocal ft=cpp
@@ -98,9 +97,6 @@ else
         source ~/.vim/config.local.vim
     endif
 end
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM user interface
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 " Turn on the WiLd menu
@@ -143,13 +139,12 @@ set cursorline
 set cursorcolumn
 " show tab
 set list
+" show list chars as special chars
 set listchars=tab:›\ ,trail:•,extends:#,nbsp:.
 set nospell
 set number
+
 "set foldenable
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and Fonts
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
 syntax enable
 colorscheme desert
@@ -179,9 +174,7 @@ set tw=500
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
-""""""""""""""""""""""""""""""
-" => Visual mode related
-""""""""""""""""""""""""""""""
+
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
 vnoremap <silent> * :call VisualSelection('f')<CR>
@@ -194,9 +187,7 @@ map <leader>ax :!chmod a+x %<cr><cr>
 set pastetoggle=<leader>tp
 map <leader>f ggVG=
 map <F6> ggVG=
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Treat long lines as break lines (useful when moving around in them)
 map j gj
 map k gk
@@ -266,16 +257,9 @@ function! HighlightSearch()
         return ''
     endif
 endfunction
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Remap VIM 0 to first non-blank character
 map 0 ^
-" Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 if has("mac") || has("macunix")
     nmap <D-j> <M-j>
     nmap <D-k> <M-k>
@@ -339,35 +323,10 @@ function! ToggleComment()
 endfunction
 nnoremap <leader><Space> :call ToggleComment()<cr>
 vnoremap <leader><Space> :call ToggleComment()<cr>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vimgrep searching and cope displaying
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" When you press gv you vimgrep after the selected text
-" vnoremap <silent> gv :call VisualSelection('gv')<CR>
-" Open vimgrep and put the cursor in the right position
-"map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
-" Vimgreps in the current file
-"map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
-" When you press <leader>r you can search and replace the selected text
-" vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
-" Do :help cope if you are unsure what cope is. It's super useful!
-"
-" When you search with vimgrep, display your results in cope by doing:
-"   <leader>cc
-"
-" To go to the next search result do:
-"   <leader>n
-"
-" To go to the previous search results do:
-"   <leader>p
-"
-"map <leader>cc :botright cope<cr>
 map <leader>co ggVGy:tabnew<cr>:set syntax=qf<cr>pgg
 map <leader>n :cn<cr>
 map <leader>p :cp<cr>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Pressing ,ss will toggle and untoggle spell checking
 map <leader>ss :setlocal spell!<cr>
 " Shortcuts using <leader>
@@ -483,9 +442,8 @@ else
         inoremap <Tab> <C-R>=CleverTab()<CR>
     endif
 endif
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Compile Run
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" compile one file
 autocmd FileType c   set makeprg=gcc\ -x\ c\ -g\ -O2\ -std=c11\ -o\ %:r.out\ %:t
 autocmd FileType cpp   set makeprg=g++\ -x\ c++\ -g\ -O2\ -std=c++17\ -o\ %:r.out\ %:t
 func! Compile_Run_Code(is_input)
@@ -559,6 +517,9 @@ nmap <leader>cw :cw 10<cr>
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow
 " autocmd QuickFixCmdPost * :copen
+
+
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " {{{ Color Schema http://vimcolors.com/596/minimalist/dark
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

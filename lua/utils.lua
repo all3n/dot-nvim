@@ -117,7 +117,10 @@ end
 function M.get_project_root(root_patterns)
   root_patterns = root_patterns or { '.git', '.root', '.svn', '.hg' }
   local currentDir = vim.fn.expand('%:p:h')
-  while currentDir ~= '/' do
+  if string.match(currentDir, "^term:") ~= nil then
+    return nil
+  end
+  while currentDir ~= '/' and currentDir ~= '' and currentDir ~= '.' do
     for _, pattern in ipairs(root_patterns) do
       local rootPath = currentDir .. '/' .. pattern
       if vim.fn.isdirectory(rootPath) == 1 or vim.fn.filereadable(rootPath) == 1 then
@@ -175,10 +178,10 @@ function M.remove_directory_recursive(path)
       if stat.type == "directory" then
         M.remove_directory_recursive(itemPath) -- 递归删除子文件夹
         uv.fs_rmdir(itemPath)                  -- 删除空文件夹
-        vim.notify("rm dir "..itemPath)
+        vim.notify("rm dir " .. itemPath)
       else
         uv.fs_unlink(itemPath) -- 删除文件
-        vim.notify("rm "..itemPath)
+        vim.notify("rm " .. itemPath)
       end
     end
   end

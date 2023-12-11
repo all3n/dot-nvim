@@ -1,4 +1,73 @@
 local M = {}
+
+local c_sys_headers = {
+  ["stdio.h"] = true,
+  ["stdlib.h"] = true,
+  ["stdbool.h"] = true,
+  ["stddef.h"] = true,
+  ["stdint.h"] = true,
+  ["string.h"] = true,
+  ["math.h"] = true,
+  ["limits.h"] = true,
+  ["float.h"] = true,
+  ["stdarg.h"] = true,
+  ["setjmp.h"] = true,
+  ["signal.h"] = true,
+  ["ctype.h"] = true,
+  ["wchar.h"] = true,
+  ["wctype.h"] = true,
+  ["assert.h"] = true,
+  ["errno.h"] = true,
+  ["time.h"] = true,
+  ["locale.h"] = true,
+}
+
+local cpp_sys_headers = {
+  ["iostream"] = true,
+  ["iomanip"] = true,
+  ["fstream"] = true,
+  ["cstdlib"] = true,
+  ["cstring"] = true,
+  ["cmath"] = true,
+  ["cctype"] = true,
+  ["cassert"] = true,
+  ["cerrno"] = true,
+  ["cstddef"] = true,
+  ["cstdbool"] = true,
+  ["csetjmp"] = true,
+  ["csignal"] = true,
+  ["clocale"] = true,
+  ["cwchar"] = true,
+  ["cwctype"] = true,
+  ["cstdarg"] = true,
+  ["ctime"] = true,
+  ["locale"] = true,
+  ["stdexcept"] = true,
+  ["string"] = true,
+  ["vector"] = true,
+  ["algorithm"] = true,
+  ["iterator"] = true,
+  ["functional"] = true,
+  ["utility"] = true,
+  ["memory"] = true,
+  ["typeinfo"] = true,
+  ["new"] = true,
+  ["tuple"] = true,
+  ["random"] = true,
+  ["regex"] = true,
+  ["thread"] = true,
+  ["mutex"] = true,
+  ["condition_variable"] = true,
+  ["atomic"] = true,
+  ["chrono"] = true,
+  ["ratio"] = true,
+  ["filesystem"] = true
+}
+
+
+
+
+
 function M.get_dependencies(h, file_path, visited)
   if not visited then
     visited = {}
@@ -113,7 +182,9 @@ function M.parse_lib_params(deps)
   local includes = {}
   local lib_paths = {}
   for _, dep in ipairs(deps) do
-    M.detect_header(dep, libs, includes, lib_paths)
+    if c_sys_headers[dep] == nil and cpp_sys_headers[dep] == nil then
+      M.detect_header(dep, libs, includes, lib_paths)
+    end
   end
   return libs, includes, lib_paths
 end

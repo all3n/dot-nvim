@@ -9,7 +9,8 @@ _G.all3nvim = {
 local utils = require("utils")
 local config_json = vim.fn.stdpath("config") .. "/config.json"
 
-local project_dir = utils.get_project_root(nil) or vim.fn.expand('%:p:h')
+-- local project_dir = utils.get_project_root(nil) or vim.fn.expand('%:p:h')
+local project_dir = vim.fn.expand('%:p:h')
 local project_json = project_dir .. "/project_config.json"
 
 if vim.fn.filereadable(config_json) ~= 1 then
