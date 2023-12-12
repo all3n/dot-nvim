@@ -4,7 +4,9 @@ _G.all3nvim = {
     tabnine = false
   },
   change_env = nil,
-  exec_env = ""
+  exec_env = "",
+  use_github_proxy = false,
+  github_proxy = "hproxy.all3n.top"
 }
 local utils = require("utils")
 local config_json = vim.fn.stdpath("config") .. "/config.json"

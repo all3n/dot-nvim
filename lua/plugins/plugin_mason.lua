@@ -22,9 +22,16 @@ function M.auto_install()
 end
 
 function M.setup()
+  if _G.all3nvim.use_github_proxy then
+    local github_download_url_template = "https://" ..
+    _G.all3nvim.github_proxy .. "/https://github.com/%s/releases/download/%s/%s"
+  else
+    local github_download_url_template = "https://github.com/%s/releases/download/%s/%s"
+  end
+
   require("mason").setup {
     github = {
-      download_url_template = "https://github.com/%s/releases/download/%s/%s",
+      download_url_template = github_download_url_template,
     }
   }
   M.auto_install()
