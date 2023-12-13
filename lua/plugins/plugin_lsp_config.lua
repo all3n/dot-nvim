@@ -1,18 +1,43 @@
 -- Setup language servers.
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local lspconfig = require('lspconfig')
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-
-lspconfig.bashls.setup {}
 lspconfig.jsonls.setup {
+  capabilities = capabilities,
   settings = {
     json = {
-      schemas = require('schemastore').json.schemas(),
+      schemas = require('schemastore').json.schemas {
+        extra = {
+          {
+            description = 'All3n NeoVIM JSON schema',
+            fileMatch = { 'config.json' },
+            name = 'config.json',
+            url = 'file://' .. vim.fn.stdpath("config") .. "/configs/config.schema.json"
+          }
+        }
+      },
       validate = { enable = true },
     },
   }
 }
-lspconfig.pyright.setup {}
+
+require('lspconfig').yamlls.setup {
+  capabilities = capabilities,
+  settings = {
+    yaml = {
+      schemaStore = {
+        enable = false,
+        url = "",
+      },
+      schemas = require('schemastore').yaml.schemas(),
+    },
+  },
+}
+
+lspconfig.pyright.setup {
+}
 lspconfig.tsserver.setup {}
 lspconfig.rust_analyzer.setup {
   settings = {
@@ -59,10 +84,10 @@ require 'lspconfig'.lua_ls.setup {
 
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
+vim.keymap.set('n', ',e', vim.diagnostic.open_float)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
+vim.keymap.set('n', ',q', vim.diagnostic.setloclist)
 
 -- Use LspAttach autocommand to only map the following keys
 -- after the language server attaches to the current buffer

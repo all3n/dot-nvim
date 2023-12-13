@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JSON schema for ALL3N NeoVim config.json files",
+  "type": "object",
+  "properties": {
+    "colorscheme": {
+      "title": "NVIM colorscheme",
+      "type": "string"
+    },
+    "github_proxy": {
+      "title": "github proxy host",
+      "type": "string"
+    },
+    "use_github_proxy": {
+      "title": "use github proxy",
+      "type": "boolean"
+    },
+    "plugins": {
+      "type": "object",
+      "properties": {
+        "tabnine": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": []
+    },
+    "mason": {
+      "type": "object",
+      "properties": {
+        "install": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "install"
+      ]
+    },
+    "python": {
+      "type": "object",
+      "properties": {
+        "envs": {
+          "type": "object",
+          "properties": {
+            "conda": {
+              "type": "string"
+            },
+            "sys": {
+              "type": "string"
+            },
+            "homebrew": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "conda",
+            "sys",
+            "homebrew"
+          ]
+        },
+        "default": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "envs",
+        "default"
+      ]
+    },
+    "cxx": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "java": {
+      "type": "object",
+      "properties": {
+        "envs": {
+          "type": "object",
+          "properties": {
+            "JavaSE-1.8": {
+              "type": "string"
+            },
+            "JavaSE-17": {
+              "type": "string"
+            },
+            "JavaSE-21": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "JavaSE-1.8",
+            "JavaSE-17",
+            "JavaSE-21"
+          ]
+        },
+        "default": {
+          "type": "string"
+        },
+        "lsp": {
+          "type": "object",
+          "properties": {
+            "jdtls_home": {
+              "type": "string"
+            },
+            "jdtls_env": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "jdtls_home",
+            "jdtls_env"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "envs",
+        "default",
+        "lsp"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}
