@@ -1,10 +1,14 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local proxy_github = ''
+if _G.all3nvim.use_github_proxy then
+  proxy_github = _G.all3nvim.github_proxy
+end
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
     "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
+    "https://" .. proxy_github .. "github.com/folke/lazy.nvim.git",
     "--branch=stable", -- latest stable release
     lazypath,
   })
@@ -330,5 +334,9 @@ require("lazy").setup({
       require("refactoring").setup()
     end,
   },
+}, {
+  git = {
+    url_format = "https://" .. proxy_github .. "github.com/%s.git"
+  }
 })
 require("plugins.plugin_lsp_config")
