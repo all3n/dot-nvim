@@ -1,5 +1,15 @@
 -- https://github.com/nvim-treesitter/nvim-treesitter
-require'nvim-treesitter.configs'.setup {
+
+local proxy_github = ''
+if _G.all3nvim.use_github_proxy then
+  proxy_github = _G.all3nvim.github_proxy .. "/"
+  for _, config in pairs(require("nvim-treesitter.parsers").get_parser_configs()) do
+    config.install_info.url = config.install_info.url:gsub("https://github.com/",
+      "http://" .. proxy_github .. "github.com/")
+  end
+end
+
+require 'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
   ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "bash", "python", "java", "rust", "go", "json", "yaml", "ini", "markdown", "make", "cmake" },
 
@@ -26,11 +36,11 @@ require'nvim-treesitter.configs'.setup {
     disable = { "c", "rust" },
     -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
     disable = function(lang, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
+      local max_filesize = 100 * 1024   -- 100 KB
+      local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+      if ok and stats and stats.size > max_filesize then
+        return true
+      end
     end,
 
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
