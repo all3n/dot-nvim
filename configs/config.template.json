@@ -1,4 +1,5 @@
 {
+  "use_github_proxy": true,
   "plugins" : {
     "tabnine" : true
   },

@@ -1,7 +1,7 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 local proxy_github = ''
 if _G.all3nvim.use_github_proxy then
-  proxy_github = _G.all3nvim.github_proxy
+  proxy_github = _G.all3nvim.github_proxy .. "/"
 end
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
