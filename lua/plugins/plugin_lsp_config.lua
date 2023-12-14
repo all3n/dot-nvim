@@ -45,13 +45,26 @@ lspconfig.rust_analyzer.setup {
   },
 }
 -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/server_configurations/clangd.lua
+local clangd_cmd = { "clangd", "--enable-config", "--clang-tidy", "--header-insertion=never",
+  "--offset-encoding=utf-16" }
+-- default build background
+local build_index_background = true
+if all3nvim.plugins and all3nvim.plugins.clangd and all3nvim.plugins.clangd.background == false then
+  build_index_background = false
+end
+if build_index_background then
+  table.insert(clangd_cmd, "--background-index")
+end
 lspconfig.clangd.setup {
-  cmd = { "clangd", "--enable-config", "--background-index", "--clang-tidy", "--header-insertion=never", "--offset-encoding=utf-16" }
+  cmd = clangd_cmd
 }
 -- lspconfig.jtdls.setup{}
 lspconfig.bashls.setup {}
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
 lspconfig.marksman.setup {}
+
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
+-- lus ls config
+-- https://luals.github.io/wiki/settings/
 require 'lspconfig'.lua_ls.setup {
   on_init = function(client)
     local path = client.workspace_folders[1].name
@@ -64,13 +77,16 @@ require 'lspconfig'.lua_ls.setup {
             version = 'LuaJIT'
           },
           -- Make the server aware of Neovim runtime files
+          diagnostics = {
+            globals = { "all3nvim", "vim" }
+          },
           workspace = {
             checkThirdParty = false,
             library = {
               vim.env.VIMRUNTIME
               -- "${3rd}/luv/library"
               -- "${3rd}/busted/library",
-            }
+            },
             -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
             -- library = vim.api.nvim_get_runtime_file("", true)
           }

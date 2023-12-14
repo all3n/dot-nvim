@@ -1,7 +1,10 @@
 _G.all3nvim = {
   colorscheme = "everforest",
   plugins = {
-    tabnine = false
+    tabnine = false,
+    clangd = {
+      background = true
+    }
   },
   change_env = nil,
   exec_env = "",
