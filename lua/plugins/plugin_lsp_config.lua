@@ -1,9 +1,32 @@
 -- Setup language servers.
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
 local lspconfig = require('lspconfig')
-local capabilities = vim.lsp.protocol.make_client_capabilities()
+require("cmp_nvim_lsp").default_capabilities()
+-- https://github.com/hrsh7th/cmp-nvim-lsp/issues/38
+-- local capabilities = vim.lsp.protocol.make_client_capabilities()
+-- local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local capabilities = vim.tbl_deep_extend("force",
+  vim.lsp.protocol.make_client_capabilities(),
+  require('cmp_nvim_lsp').default_capabilities()
+)
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+-- autotools
+lspconfig.autotools_ls.setup {
+  capabilities = capabilities
+}
+-- cmake
+lspconfig.cmake.setup {
+  capabilities = capabilities
+}
+
+-- xml
+lspconfig.lemminx.setup {
+  capabilities = capabilities
+}
+
+
+-- json
 lspconfig.jsonls.setup {
   capabilities = capabilities,
   settings = {
@@ -37,9 +60,13 @@ require('lspconfig').yamlls.setup {
 }
 
 lspconfig.pyright.setup {
+  capabilities = capabilities
 }
-lspconfig.tsserver.setup {}
+lspconfig.tsserver.setup {
+  capabilities = capabilities
+}
 lspconfig.rust_analyzer.setup {
+  capabilities = capabilities,
   settings = {
     ['rust-analyzer'] = {},
   },
@@ -56,16 +83,22 @@ if build_index_background then
   table.insert(clangd_cmd, "--background-index")
 end
 lspconfig.clangd.setup {
+  capabilities = capabilities,
   cmd = clangd_cmd
 }
 -- lspconfig.jtdls.setup{}
-lspconfig.bashls.setup {}
-lspconfig.marksman.setup {}
+lspconfig.bashls.setup {
+  capabilities = capabilities,
+}
+lspconfig.marksman.setup {
+  capabilities = capabilities,
+}
 
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
 -- lus ls config
 -- https://luals.github.io/wiki/settings/
 require 'lspconfig'.lua_ls.setup {
+  capabilities = capabilities,
   on_init = function(client)
     local path = client.workspace_folders[1].name
     if not vim.loop.fs_stat(path .. '/.luarc.json') and not vim.loop.fs_stat(path .. '/.luarc.jsonc') then
