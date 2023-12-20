@@ -334,6 +334,23 @@ require("lazy").setup({
       require("refactoring").setup()
     end,
   },
+  {
+    "kawre/leetcode.nvim",
+    build = ":TSUpdate html",
+    enabled = _G.all3nvim.plugins.leetcode or false,
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-lua/plenary.nvim",   -- required by telescope
+      "MunifTanjim/nui.nvim",
+      -- optional
+      "nvim-treesitter/nvim-treesitter",
+      "rcarriga/nvim-notify",
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("plugins.plugin_leetcode").setup()
+    end
+  }
 }, {
   git = {
     url_format = "https://" .. proxy_github .. "github.com/%s.git"
