@@ -15,6 +15,10 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 lspconfig.autotools_ls.setup {
   capabilities = capabilities
 }
+lspconfig.ast_grep.setup {
+  capabilities = capabilities
+}
+
 -- cmake
 lspconfig.cmake.setup {
   capabilities = capabilities
@@ -25,6 +29,9 @@ lspconfig.lemminx.setup {
   capabilities = capabilities
 }
 
+lspconfig.gopls.setup {
+  capabilities = capabilities
+}
 
 -- json
 lspconfig.jsonls.setup {

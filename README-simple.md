@@ -1,7 +1,7 @@
 # SIMPLE VIMRC
 ## NoPlugin Simple Vimrc
 ```
-wget https://hproxy.all3n.top/https://raw.githubusercontent.com/all3n/dot-nvim/main/vimrc.simple -o ~/.vimrc
+wget https://hproxy.all3n.top/https://raw.githubusercontent.com/all3n/dot-nvim/main/vimrc.simple -O ~/.vimrc
 ```
 
 ### windows plug

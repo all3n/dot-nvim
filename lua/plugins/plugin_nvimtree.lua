@@ -25,6 +25,9 @@ M.setup = function()
     diagnostics = {
       enable = true,
       show_on_dirs = true
+    },
+    filesystem_watchers = {
+      enable = false
     }
   })
 end

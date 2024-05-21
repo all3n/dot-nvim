@@ -8,6 +8,13 @@ function M.setup()
       translator = true, ---@type boolean
       translate_problems = true, ---@type boolean
     },
+    hooks = {
+      LeetEnter = {
+        function()
+          -- vim.cmd.colorscheme("everforest")
+        end
+      }
+    }
   }
 end
 

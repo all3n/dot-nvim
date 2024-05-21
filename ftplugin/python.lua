@@ -62,7 +62,7 @@ local function getCurrentEnvironment(env_python_bin)
   if pythonBin == nil or pythonBin == "" then
     environmentName = nil
   elseif string.match(pythonBin, "conda") then
-    local condaEnv = os.getenv("CONDA_DEFAULT_ENV")
+    local condaEnv = os.getenv("CONDA_DEFAULT_ENV") or "default"
     environmentName = "conda[" .. condaEnv .. "]"
   elseif string.match(pythonBin, "venv") then
     environmentName = "venv" .. os.getenv("VIRTUAL_ENV_PROMPT")
