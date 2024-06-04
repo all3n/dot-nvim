@@ -20,6 +20,33 @@
       "properties": {
         "tabnine": {
           "type": "boolean"
+        },
+        "gopls": {
+          "type": "boolean"
+        },
+        "xml": {
+          "type": "boolean"
+        },
+        "leetcode": {
+          "type": "boolean"
+        },
+        "lua_ls": {
+          "type": "boolean"
+        },
+        "pyright": {
+          "type": "boolean"
+        },
+        "jsonls": {
+          "type": "boolean"
+        },
+        "yamlls": {
+          "type": "boolean"
+        },
+        "clangd": {
+          "type": "boolean"
+        },
+        "tsserver": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,

@@ -2,9 +2,19 @@ _G.all3nvim = {
   colorscheme = "everforest",
   plugins = {
     tabnine = false,
-    clangd = {
-      background = true
-    }
+    clangd = false,
+    autotools = false,
+    ast_grep = false,
+    gopls = false,
+    xml = false,
+    cmake = false,
+    jsonls = false,
+    bashls = false,
+    lus_ls = false,
+    marksman = false,
+    pyright = false,
+    tsserver  = false,
+    rust_analyzer = false
   },
   change_env = nil,
   exec_env = "",

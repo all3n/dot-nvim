@@ -87,7 +87,8 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     config = function()
       require("plugins.plugin_treesitter")
-    end
+    end,
+    tag = 'v0.9.2'
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
@@ -110,9 +111,7 @@ require("lazy").setup({
   { "hrsh7th/vim-vsnip" },
   {
     "L3MON4D3/LuaSnip",
-    -- follow latest release.
-    version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
-    -- install jsregexp (optional!).
+    version = "v2.3.0",
     build = "make install_jsregexp",
     dependencies = { "rafamadriz/friendly-snippets" },
     lazy = true,
@@ -151,7 +150,7 @@ require("lazy").setup({
     end
   },
   { "theHamsta/nvim-dap-virtual-text", config = true },
-  { "rcarriga/nvim-dap-ui" },
+  { "rcarriga/nvim-dap-ui",            dependencies = { "nvim-neotest/nvim-nio" } },
   { "mfussenegger/nvim-dap-python",    ft = "python" },
   {
     "Weissle/persistent-breakpoints.nvim",
@@ -340,7 +339,7 @@ require("lazy").setup({
     enabled = _G.all3nvim.plugins.leetcode or false,
     dependencies = {
       "nvim-telescope/telescope.nvim",
-      "nvim-lua/plenary.nvim",   -- required by telescope
+      "nvim-lua/plenary.nvim", -- required by telescope
       "MunifTanjim/nui.nvim",
       -- optional
       "nvim-treesitter/nvim-treesitter",
