@@ -13,7 +13,7 @@ _G.all3nvim = {
     lus_ls = false,
     marksman = false,
     pyright = false,
-    tsserver  = false,
+    tsserver = false,
     rust_analyzer = false
   },
   change_env = nil,

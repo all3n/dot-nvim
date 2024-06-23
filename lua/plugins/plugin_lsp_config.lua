@@ -24,6 +24,34 @@ if _G.all3nvim.plugins.ast_grep then
   }
 end
 
+if _G.all3nvim.plugins.tsserver then
+  lspconfig.tsserver.setup{
+    init_options = {
+      plugins = {
+        {
+          name = "@vue/typescript-plugin",
+          -- location = "/usr/local/lib/node_modules/@vue/typescript-plugin",
+          -- macos
+          location = "/opt/homebrew/lib/node_modules/@vue/typescript-plugin",
+          languages = {"javascript", "typescript", "vue"},
+        },
+      },
+    },
+    filetypes = {
+      "javascript",
+      "typescript",
+      "vue",
+    },
+    capabilities = capabilities
+  }
+  -- lspconfig.vuels.setup{
+    -- capabilities = capabilities
+  -- }
+  lspconfig.volar.setup {
+    capabilities = capabilities
+  }
+end
+
 if _G.all3nvim.plugins.cmake then
   -- cmake
   lspconfig.cmake.setup {
@@ -86,11 +114,6 @@ if _G.all3nvim.plugins.pyright then
     capabilities = capabilities
   }
 end
-if _G.all3nvim.plugins.tsserver then
-  lspconfig.tsserver.setup {
-    capabilities = capabilities
-  }
-end
 if _G.all3nvim.plugins.rust_analyzer then
   lspconfig.rust_analyzer.setup {
     capabilities = capabilities,
@@ -129,7 +152,7 @@ if _G.all3nvim.plugins.lus_ls then
   -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
   -- lus ls config
   -- https://luals.github.io/wiki/settings/
-  require 'lspconfig'.lua_ls.setup {
+  lspconfig.lua_ls.setup {
     capabilities = capabilities,
     on_init = function(client)
       local path = client.workspace_folders[1].name
@@ -201,3 +224,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end, opts)
   end,
 })
+
+
+
