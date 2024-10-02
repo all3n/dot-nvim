@@ -9,9 +9,12 @@ M.setup = function()
     sort = {
       sorter = "case_sensitive",
     },
+    root_dirs = {".project"},
     update_focused_file = {
-      enable = true,
-      update_cwd = true,
+      enable = false,
+      update_root = {
+        enable = true
+      }
     },
     view = {
       width = 30,
@@ -19,6 +22,8 @@ M.setup = function()
     renderer = {
       group_empty = true,
     },
+    prefer_startup_root = true,
+    sync_root_with_cwd = true,
     filters = {
       dotfiles = true,
     },

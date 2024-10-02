@@ -19,7 +19,11 @@ vim.keymap.set("n", "[c", function()
   require("treesitter-context").go_to_context()
 end, { silent = true })
 
+vim.keymap.set('v', '<leader>y', require('osc52').copy_visual)
 
 vim.keymap.set({ 'n' }, 'M', function()
   require('lsp_signature').toggle_float_win()
 end, { silent = true, noremap = true, desc = 'toggle signature' })
+
+
+

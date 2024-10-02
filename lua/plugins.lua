@@ -35,7 +35,7 @@ require("lazy").setup({
     end
   },
   {
-    "ahmedkhalf/project.nvim",
+    "DrKJeff16/project.nvim",
     config = function()
       require("project_nvim").setup {}
     end
@@ -92,7 +92,7 @@ require("lazy").setup({
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
-  { "jose-elias-alvarez/null-ls.nvim",            config = true },
+  { "nvimtools/none-ls.nvim",            config = true },
   {
     "neovim/nvim-lspconfig",
     dependencies = { "b0o/SchemaStore.nvim" }
@@ -211,23 +211,23 @@ require("lazy").setup({
       })
     end
   },
-  {
-    "skywind3000/asyncrun.vim",
-    name = "asyncrun",
-    config = function()
-      require("asyncrun_toggleterm").setup({
-        mapping = "<leader>tt",
-        start_in_insert = false,
-      })
-    end
-  },
-  {
-    'skywind3000/asynctasks.vim',
-    config = function()
-      require "plugins.plugin_async_tasks"
-    end
-  },
-  { 'GustavoKatel/telescope-asynctasks.nvim' },
+  -- {
+  --   "skywind3000/asyncrun.vim",
+  --   name = "asyncrun",
+  --   config = function()
+  --     require("asyncrun_toggleterm").setup({
+  --       mapping = "<leader>tt",
+  --       start_in_insert = false,
+  --     })
+  --   end
+  -- },
+  -- {
+  --   'skywind3000/asynctasks.vim',
+  --   config = function()
+  --     require "plugins.plugin_async_tasks"
+  --   end
+  -- },
+  -- { 'GustavoKatel/telescope-asynctasks.nvim' },
   { 'phaazon/hop.nvim',                      config = true },
   {
     'rcarriga/nvim-notify',
@@ -349,7 +349,26 @@ require("lazy").setup({
     config = function()
       require("plugins.plugin_leetcode").setup()
     end
-  }
+  },
+  {'ojroques/nvim-osc52', config = function()
+    require('osc52').setup {
+      max_length = 0,           -- Maximum length of selection (0 for no limit)
+      silent = false,           -- Disable message on successful copy
+      trim = false,             -- Trim surrounding whitespaces before copy
+      tmux_passthrough = false, -- Use tmux passthrough (requires tmux: set -g allow-passthrough on)
+    }
+    -- vim.g.clipboard = {
+    --   name = 'OSC 52',
+    --   copy = {
+    --     ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+    --     ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+    --   },
+    --   paste = {
+    --     ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+    --     ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+    --   },
+    -- }
+  end}
 }, {
   git = {
     url_format = "https://" .. proxy_github .. "github.com/%s.git"
