@@ -150,7 +150,7 @@ require("lazy").setup({
     end
   },
   { "theHamsta/nvim-dap-virtual-text", config = true },
-  { "rcarriga/nvim-dap-ui",            dependencies = { "nvim-neotest/nvim-nio" } },
+  { "rcarriga/nvim-dap-ui", dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} },
   { "mfussenegger/nvim-dap-python",    ft = "python" },
   {
     "Weissle/persistent-breakpoints.nvim",
