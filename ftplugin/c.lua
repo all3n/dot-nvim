@@ -1,3 +1,4 @@
+local null_ls = require("null-ls")
 local utils = require("utils")
 local c_env = "-"
 local os_info = vim.loop.os_uname()
@@ -22,3 +23,5 @@ elseif os_info.sysname == "Darwin" then
   local gxx = utils.execute_command(cmd)
   _G.all3nvim.env = arch .. ":" .. compiler .. ":" .. gxx
 end
+-- https://github.com/nvimtools/none-ls.nvim/blob/main/lua/null-ls/builtins/formatting/clang_format.lua
+-- null_ls.register(null_ls.builtins.formatting.clang_format)

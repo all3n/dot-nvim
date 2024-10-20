@@ -68,7 +68,7 @@ if _G.all3nvim.plugins.lua_ls then
 end
 
 if _G.all3nvim.plugins.tsserver then
-  lspconfig.tsserver.setup{
+  lspconfig.tsserver.setup {
     init_options = {
       plugins = {
         {
@@ -76,7 +76,7 @@ if _G.all3nvim.plugins.tsserver then
           -- location = "/usr/local/lib/node_modules/@vue/typescript-plugin",
           -- macos
           location = "/opt/homebrew/lib/node_modules/@vue/typescript-plugin",
-          languages = {"javascript", "typescript", "vue"},
+          languages = { "javascript", "typescript", "vue" },
         },
       },
     },
@@ -88,7 +88,7 @@ if _G.all3nvim.plugins.tsserver then
     capabilities = capabilities
   }
   -- lspconfig.vuels.setup{
-    -- capabilities = capabilities
+  -- capabilities = capabilities
   -- }
   lspconfig.volar.setup {
     capabilities = capabilities
@@ -153,6 +153,9 @@ if _G.all3nvim.plugins.yamlls then
 end
 
 if _G.all3nvim.plugins.pyright then
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/pyright.lua
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#pyright
+  -- https://microsoft.github.io/pyright/#/settings
   lspconfig.pyright.setup {
     capabilities = capabilities
   }
@@ -167,7 +170,7 @@ if _G.all3nvim.plugins.rust_analyzer then
 end
 
 if _G.all3nvim.plugins.clangd then
-  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/server_configurations/clangd.lua
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/clangd.lua
   local clangd_cmd = { "clangd", "--enable-config", "--clang-tidy", "--header-insertion=never",
     "--offset-encoding=utf-16" }
   -- default build background
@@ -229,6 +232,3 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end, opts)
   end,
 })
-
-
-
