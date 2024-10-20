@@ -92,7 +92,7 @@ require("lazy").setup({
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
-  { "nvimtools/none-ls.nvim",            config = true },
+  { "nvimtools/none-ls.nvim",                     config = true },
   {
     "neovim/nvim-lspconfig",
     dependencies = { "b0o/SchemaStore.nvim" }
@@ -150,7 +150,7 @@ require("lazy").setup({
     end
   },
   { "theHamsta/nvim-dap-virtual-text", config = true },
-  { "rcarriga/nvim-dap-ui", dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} },
+  { "rcarriga/nvim-dap-ui",            dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
   { "mfussenegger/nvim-dap-python",    ft = "python" },
   {
     "Weissle/persistent-breakpoints.nvim",
@@ -228,7 +228,7 @@ require("lazy").setup({
   --   end
   -- },
   -- { 'GustavoKatel/telescope-asynctasks.nvim' },
-  { 'phaazon/hop.nvim',                      config = true },
+  { 'phaazon/hop.nvim', config = true },
   {
     'rcarriga/nvim-notify',
     config = function()
@@ -350,25 +350,28 @@ require("lazy").setup({
       require("plugins.plugin_leetcode").setup()
     end
   },
-  {'ojroques/nvim-osc52', config = function()
-    require('osc52').setup {
-      max_length = 0,           -- Maximum length of selection (0 for no limit)
-      silent = false,           -- Disable message on successful copy
-      trim = false,             -- Trim surrounding whitespaces before copy
-      tmux_passthrough = false, -- Use tmux passthrough (requires tmux: set -g allow-passthrough on)
-    }
-    -- vim.g.clipboard = {
-    --   name = 'OSC 52',
-    --   copy = {
-    --     ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-    --     ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-    --   },
-    --   paste = {
-    --     ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-    --     ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-    --   },
-    -- }
-  end}
+  {
+    'ojroques/nvim-osc52',
+    config = function()
+      require('osc52').setup {
+        max_length = 0,           -- Maximum length of selection (0 for no limit)
+        silent = false,           -- Disable message on successful copy
+        trim = false,             -- Trim surrounding whitespaces before copy
+        tmux_passthrough = false, -- Use tmux passthrough (requires tmux: set -g allow-passthrough on)
+      }
+      -- vim.g.clipboard = {
+      --   name = 'OSC 52',
+      --   copy = {
+      --     ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+      --     ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+      --   },
+      --   paste = {
+      --     ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+      --     ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+      --   },
+      -- }
+    end
+  }
 }, {
   git = {
     url_format = "https://" .. proxy_github .. "github.com/%s.git"
