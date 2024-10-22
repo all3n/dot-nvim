@@ -47,6 +47,9 @@
         },
         "tsserver": {
           "type": "boolean"
+        },
+        "cmake": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false,

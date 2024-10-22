@@ -1,5 +1,5 @@
 -- Setup language servers.
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 local lspconfig = require('lspconfig')
 require("cmp_nvim_lsp").default_capabilities()
 -- https://github.com/hrsh7th/cmp-nvim-lsp/issues/38
@@ -153,12 +153,41 @@ if _G.all3nvim.plugins.yamlls then
 end
 
 if _G.all3nvim.plugins.pyright then
+  -- https://github.com/astral-sh/ruff-lsp/issues/384
   -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/pyright.lua
   -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#pyright
   -- https://microsoft.github.io/pyright/#/settings
+  -- disable pyright analysis check and use ruff
+  -- https://docs.astral.sh/ruff/editors/setup/#neovim
   lspconfig.pyright.setup {
-    capabilities = capabilities
+    capabilities = capabilities,
+    settings = {
+      pyright = {
+        disableOrganizeImports = true,
+        disableTaggedHints = true,
+      },
+      python = {
+        analysis = {
+          ignore = { '*' }
+        },
+        diagnosticSeverityOverrides = {
+          -- https://github.com/microsoft/pyright/blob/main/docs/configuration.md#type-check-diagnostics-settings
+          reportUndefinedVariable = "none",
+        }
+      }
+    }
   }
+
+  -- should install ruff
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff
+  -- https://github.com/astral-sh/ruff
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/ruff.lua
+  lspconfig.ruff.setup({
+    capabilities = capabilities,
+    settings = {
+      -- Server settings should go here
+    }
+  })
 end
 if _G.all3nvim.plugins.rust_analyzer then
   lspconfig.rust_analyzer.setup {

@@ -1,2 +1,42 @@
--- local null_ls = require("null-ls")
--- null_ls.register({ null_ls.builtins.formatting.beautysh })
+local null_ls = require("null-ls")
+-- https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/lua/null-ls/builtins/diagnostics/shellcheck.lua
+local h = require("null-ls.helpers")
+local methods = require("null-ls.methods")
+
+local DIAGNOSTICS = methods.internal.DIAGNOSTICS
+
+local shellcheck_fmt = h.make_builtin({
+    name = "shellcheck",
+    meta = {
+        url = "https://www.shellcheck.net/",
+        description = "A shell script static analysis tool.",
+    },
+    method = DIAGNOSTICS,
+    filetypes = { "sh" },
+    generator_opts = {
+        command = "shellcheck",
+        args = { "--format", "json1", "--source-path=$DIRNAME", "--external-sources", "-" },
+        to_stdin = true,
+        format = "json",
+        check_exit_code = function(code)
+            return code <= 1
+        end,
+        on_output = function(params)
+            local parser = h.diagnostics.from_json({
+                attributes = { code = "code" },
+                severities = {
+                    info = h.diagnostics.severities["information"],
+                    style = h.diagnostics.severities["hint"],
+                },
+            })
+
+            return parser({ output = params.output.comments })
+        end,
+    },
+    factory = h.generator_factory,
+})
+
+
+null_ls.register({
+  shellcheck_fmt
+})
