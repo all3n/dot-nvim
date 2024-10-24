@@ -236,38 +236,6 @@ require("lazy").setup({
     end
   },
   {
-    "lvimuser/lsp-inlayhints.nvim",
-    lazy = true,
-    opts = {},
-    branch = "anticonceal",
-    init = function()
-      vim.api.nvim_create_autocmd("LspAttach", {
-        group = vim.api.nvim_create_augroup("LspAttach_inlayhints", {}),
-        callback = function(args)
-          if not (args.data and args.data.client_id) then
-            return
-          end
-          local client = vim.lsp.get_client_by_id(args.data.client_id)
-          require("lsp-inlayhints").on_attach(client, args.buf)
-        end,
-      })
-      -- require("lsp-inlayhints").setup()
-      -- vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
-      -- vim.api.nvim_create_autocmd("LspAttach", {
-      --   group = "LspAttach_inlayhints",
-      --   callback = function(args)
-      --     if not (args.data and args.data.client_id) then
-      --       return
-      --     end
-      --
-      --     local bufnr = args.buf
-      --     local client = vim.lsp.get_client_by_id(args.data.client_id)
-      --     require("lsp-inlayhints").on_attach(client, bufnr)
-      --   end,
-      -- })
-    end
-  },
-  {
     "ray-x/lsp_signature.nvim",
     -- event = "VeryLazy",
     opts = {},
@@ -359,6 +327,7 @@ require("lazy").setup({
         trim = false,             -- Trim surrounding whitespaces before copy
         tmux_passthrough = false, -- Use tmux passthrough (requires tmux: set -g allow-passthrough on)
       }
+      -- set g maybe very slow
       -- vim.g.clipboard = {
       --   name = 'OSC 52',
       --   copy = {
@@ -370,6 +339,57 @@ require("lazy").setup({
       --     ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
       --   },
       -- }
+    end
+  },
+  {
+    -- for golang
+    "ray-x/go.nvim",
+    dependencies = { -- optional packages
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("go").setup()
+    end,
+    event = { "CmdlineEnter" },
+    ft = { "go", 'gomod' },
+    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+  },
+  {
+    "MysticalDevil/inlay-hints.nvim",
+    event = "LspAttach",
+    dependencies = { "neovim/nvim-lspconfig" },
+    config = function()
+      require("inlay-hints").setup()
+    end
+  },
+  {
+    "scalameta/nvim-metals",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    ft = { "scala", "sbt"
+    --, "java" 
+    },
+    enabled = _G.all3nvim.plugins.metals or false,
+    opts = function()
+      local metals_config = require("metals").bare_config()
+      metals_config.on_attach = function(client, bufnr)
+        -- your on_attach function
+      end
+
+      return metals_config
+    end,
+    config = function(self, metals_config)
+      local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = self.ft,
+        callback = function()
+          require("metals").initialize_or_attach(metals_config)
+        end,
+        group = nvim_metals_group,
+      })
     end
   }
 }, {

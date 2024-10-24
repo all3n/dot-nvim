@@ -110,8 +110,28 @@ if _G.all3nvim.plugins.xml then
 end
 
 if _G.all3nvim.plugins.gopls then
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#gopls
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/gopls.lua
   lspconfig.gopls.setup {
-    capabilities = capabilities
+    capabilities = capabilities,
+    settings = {
+      gopls = {
+        analyses = {
+          unusedparams = true,
+        },
+        staticcheck = true,
+        gofumpt = true,
+        hints = {
+          rangeVariableTypes = true,
+          parameterNames = true,
+          constantValues = true,
+          assignVariableTypes = true,
+          compositeLiteralFields = true,
+          compositeLiteralTypes = true,
+          functionTypeParameters = true,
+        },
+      }
+    }
   }
 end
 
@@ -154,29 +174,24 @@ end
 
 if _G.all3nvim.plugins.pyright then
   -- https://github.com/astral-sh/ruff-lsp/issues/384
-  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/pyright.lua
   -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#pyright
-  -- https://microsoft.github.io/pyright/#/settings
   -- disable pyright analysis check and use ruff
   -- https://docs.astral.sh/ruff/editors/setup/#neovim
-  lspconfig.pyright.setup {
-    capabilities = capabilities,
+
+  -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/basedpyright.lua
+  -- basedpyright better than pyright
+  -- https://docs.basedpyright.com/latest/installation/ides/
+  lspconfig.basedpyright.setup({
     settings = {
-      pyright = {
-        disableOrganizeImports = true,
-        disableTaggedHints = true,
-      },
-      python = {
+      basedpyright = {
         analysis = {
-          ignore = { '*' }
+          autoSearchPaths = true,
+          diagnosticMode = "openFilesOnly",
+          useLibraryCodeForTypes = true
         },
-        diagnosticSeverityOverrides = {
-          -- https://github.com/microsoft/pyright/blob/main/docs/configuration.md#type-check-diagnostics-settings
-          reportUndefinedVariable = "none",
-        }
       }
     }
-  }
+  })
 
   -- should install ruff
   -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#ruff
@@ -209,7 +224,19 @@ if _G.all3nvim.plugins.clangd then
   end
   lspconfig.clangd.setup {
     capabilities = capabilities,
-    cmd = clangd_cmd
+    cmd = clangd_cmd,
+    settings = {
+      clangd = {
+        InlayHints = {
+          Designators = true,
+          Enabled = true,
+          ParameterNames = true,
+          DeducedTypes = true,
+        },
+        fallbackFlags = { "-std=c++17" },
+      }
+    }
+
   }
 end
 if _G.all3nvim.plugins.bashls then

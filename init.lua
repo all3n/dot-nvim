@@ -14,7 +14,8 @@ _G.all3nvim = {
     marksman = false,
     pyright = false,
     tsserver = false,
-    rust_analyzer = false
+    rust_analyzer = false,
+    metals = false
   },
   change_env = nil,
   exec_env = "",

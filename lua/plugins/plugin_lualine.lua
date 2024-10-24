@@ -63,8 +63,8 @@ M.setup = function()
     sections = {
       lualine_a = { 'mode' },
       lualine_b = { 'branch', 'diff', 'diagnostics' },
-      lualine_c = { 'filename', lsp_env, remote_statusline },
-      lualine_x = { 'overseer', project_name, 'encoding', 'fileformat', 'filetype' },
+      lualine_c = { 'filename', lsp_env, remote_statusline , 'lsp_progress'},
+      lualine_x = { 'overseer', project_name, 'encoding', 'fileformat', 'filetype', 'tabnine' },
       lualine_y = { 'progress' },
       lualine_z = { 'location' }
     },
