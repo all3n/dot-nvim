@@ -69,9 +69,9 @@ cmp.setup({
     -- c-y conflict tabnine accept
     -- ['<c-y>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     ["<Tab>"] = cmp.mapping(function(fallback)
-      if require("tabnine.keymaps").has_suggestion() then
-        require("tabnine.keymaps").accept_suggestion()
-      elseif cmp.visible() and has_words_before() then
+      -- if require("tabnine.keymaps").has_suggestion() then
+        -- require("tabnine.keymaps").accept_suggestion()
+      if cmp.visible() and has_words_before() then
         cmp.select_next_item()
       elseif vim.fn["vsnip#available"](1) == 1 then
         feedkey("<Plug>(vsnip-expand-or-jump)", "")
