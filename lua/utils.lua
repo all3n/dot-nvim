@@ -202,4 +202,12 @@ function M.remove_directory_recursive(path)
   end
 end
 
+function M.insert_unique(set, val)
+  set[val] = true
+end
+
+function M.is_in_set(set, val)
+  return set[val] ~= nil
+end
+
 return M

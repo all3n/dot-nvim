@@ -84,15 +84,18 @@ function M.get_dependencies(h, file_path, visited)
       if not visited[dependency_file] then
         visited[dependency_file] = true
         local sub_dependencies, _ = M.get_dependencies(h, dependency_file, visited)
-        for _, sub_dependency in ipairs(sub_dependencies) do
-          table.insert(dependencies, sub_dependency)
+        for sub_dependency, _ in ipairs(sub_dependencies) do
+          -- table.insert(dependencies, sub_dependency)
+          dependencies[sub_dependency] = true
         end
-        table.insert(dependencies, dependency_file)
+        -- table.insert(dependencies, dependency_file)
+        dependencies[dependency_file] = true
       end
     end
 
     for match in string.gmatch(content, sys_pattern) do
-      table.insert(sys_dependencies, match)
+      -- table.insert(sys_dependencies, match)
+      sys_dependencies[match] = true
     end
     file:close()
   end
@@ -181,7 +184,8 @@ function M.parse_lib_params(deps)
   local libs = {}
   local includes = {}
   local lib_paths = {}
-  for _, dep in ipairs(deps) do
+  -- for _, dep in ipairs(deps) do
+  for dep, _ in ipairs(deps) do
     if c_sys_headers[dep] == nil and cpp_sys_headers[dep] == nil then
       M.detect_header(dep, libs, includes, lib_paths)
     end
@@ -193,19 +197,25 @@ function M.gxx_build(handler, file_path, build_dir)
   local dependencies, sys_dependencies = M.get_dependencies(handler, file_path, nil)
   local libs, includes, lib_paths = M.parse_lib_params(sys_dependencies)
   local cflags = ""
+  local rpaths = {}
   for _, v in ipairs(includes) do
     cflags = cflags .. " -I" .. v .. " "
   end
   local ldflags = ""
   for _, v in ipairs(lib_paths) do
     ldflags = ldflags .. " -L" .. v .. " "
+    table.insert(rpaths, v)
   end
   for _, v in ipairs(libs) do
     ldflags = ldflags .. " -l" .. v .. " "
   end
   local result = table.concat(libs, "-L")
+  if #rpaths ~= 0 then
+    ldflags = ldflags .. " -Wl,-rpath=" .. table.concat(rpaths, ",")
+  end
   local envs = handler.envs
   local bin_path = build_dir .. "/" .. envs.VIM_FILENOEXT
+  -- local bin_path = "./" .. envs.VIM_FILENOEXT
   table.insert(handler.cmds, "cd " .. envs.VIM_FILEDIR)
   local build_cmd = string.format("%s %s -o %s %s %s %s", handler.executor, cflags, bin_path,
     envs.VIM_FILENAME, table.concat(dependencies, " "), ldflags)

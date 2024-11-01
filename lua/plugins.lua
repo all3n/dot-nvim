@@ -326,6 +326,7 @@ require("lazy").setup({
         silent = false,           -- Disable message on successful copy
         trim = false,             -- Trim surrounding whitespaces before copy
         tmux_passthrough = false, -- Use tmux passthrough (requires tmux: set -g allow-passthrough on)
+        -- tmux_passthrough = true, -- Use tmux passthrough (requires tmux: set -g allow-passthrough on)
       }
       -- set g maybe very slow
       -- vim.g.clipboard = {
@@ -370,7 +371,7 @@ require("lazy").setup({
       "nvim-lua/plenary.nvim",
     },
     ft = { "scala", "sbt"
-    --, "java" 
+      --, "java"
     },
     enabled = _G.all3nvim.plugins.metals or false,
     opts = function()
@@ -391,6 +392,11 @@ require("lazy").setup({
         group = nvim_metals_group,
       })
     end
+  },
+  {
+    "aserowy/tmux.nvim",
+    config = function() return require("tmux").setup() end,
+    enabled = false
   }
 }, {
   git = {

@@ -1,3 +1,4 @@
+-- @author: all3n
 -- basic options for neovim (from origin vim opts)
 
 -- options reference: https://neovim.io/doc/user/options.html
@@ -40,7 +41,7 @@ M.load_default_options = function()
   -- vim.opt.completeopt = { "menuone", "noselect" }
 
   -- file encoding
-  vim.opt.fileencoding = 'utf-8'
+  vim.opt.fileencodings = {'utf-8', 'ucs-bom','cp936','gb18030','latin1'}
 
   -- foldmethod
   vim.opt.foldmethod = "manual"

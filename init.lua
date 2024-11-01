@@ -1,3 +1,5 @@
+-- @author: all3n
+-- this neovim lua load entrypoint 
 _G.all3nvim = {
   colorscheme = "everforest",
   plugins = {
@@ -42,6 +44,7 @@ else
   vim.notify(data)
 end
 
+-- load project settings json
 if vim.fn.filereadable(project_json) == 1 then
   local p_ok, p_data = utils.json_decode(project_json)
   if p_ok then
@@ -54,7 +57,10 @@ end
 require("options").load_defaults()
 -- load plugins
 require("plugins")
+-- load custom commands settings
 local commands = require("commands")
 commands.load(commands.defaults)
+-- load keymaps settings
 require("keymaps")
+
 vim.cmd.colorscheme(all3nvim.colorscheme)

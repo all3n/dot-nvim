@@ -106,8 +106,9 @@ function M.execute(args, run)
 
   local build_dir = nil
   if handler.build then
-    build_dir = join_paths(vim.fn.stdpath("cache"), project_name, "build_" .. ext_name)
+    -- build_dir = join_paths(vim.fn.stdpath("cache"), project_name, "build_" .. ext_name)
     -- build_dir = utils.mkdir_temp("nvim_build_" .. file_no_ext)
+    build_dir = join_paths(envs.VIM_FILEDIR , "build")
     table.insert(handler.cmds, "mkdir -p " .. build_dir)
     handler.envs["build_dir"] = build_dir
     handler.build(handler, file_path, build_dir)
