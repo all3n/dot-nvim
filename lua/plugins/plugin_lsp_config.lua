@@ -184,6 +184,9 @@ if _G.all3nvim.plugins.pyright then
   lspconfig.basedpyright.setup({
     settings = {
       basedpyright = {
+        python = {
+          pythonPath = "python"
+        },
         analysis = {
           autoSearchPaths = true,
           diagnosticMode = "openFilesOnly",
