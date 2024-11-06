@@ -182,6 +182,7 @@ if _G.all3nvim.plugins.pyright then
   -- basedpyright better than pyright
   -- https://docs.basedpyright.com/latest/installation/ides/
   lspconfig.basedpyright.setup({
+    capabilities = capabilities,
     settings = {
       basedpyright = {
         python = {

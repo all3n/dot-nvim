@@ -13,6 +13,10 @@ cp configs/config-ubuntu.template.json config.json
 ## global 
 1. leader -> space
 
+## config
+1. default copy from ./configs/config.template.json 
+2. edit config.json for your customized behavior
+
 ## init entrypoint
 1. init.lua
 
@@ -72,7 +76,7 @@ cp configs/config-ubuntu.template.json config.json
 
 
 
-## JAVA (JdtLs)
+## JAVA (JdtLs) Optional
 ### 1.Ubuntu set java 
 ```
 cp ~/.config/nvim/configs/config-ubuntu.template.json ~/.config/nvim/config.json
@@ -88,13 +92,13 @@ brew install openjdk
 brew install openjdk@17
 ```
 
-## distant
+## distant Optional
 1. use musl libc for avoid glibc not support
 1. curl -L https://sh.distant.dev | sh -s -- --distant-host 'x86_64-unknown-linux-musl'
 
 
 
-## metals
+## metals Optional
 ```
 mkdir -p ~/.local/bin
 curl -fL https://github.com/VirtusLab/coursier-m1/releases/latest/download/cs-aarch64-apple-darwin.gz | gzip -d > ~/.local/bin/cs
