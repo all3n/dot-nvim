@@ -1,6 +1,11 @@
 #!/bin/bash
 
-export VIM_HOME=/home/jovyan/dot-nvim
+SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+PARENT_DIR=$(dirname "$SCRIPT_DIR")
+
+export VIM_HOME=$PARENT_DIR
+
 # 加载初始化脚本
 source "$VIM_HOME/bin/init.sh"
 
