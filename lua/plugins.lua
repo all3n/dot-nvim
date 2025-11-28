@@ -1,19 +1,81 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 local proxy_github = ''
-if _G.all3nvim.use_github_proxy then
-  proxy_github = _G.all3nvim.github_proxy .. "/"
+if type(_G.all3nvim) == "table" then
+  if _G.all3nvim.use_github_proxy then
+    proxy_github = _G.all3nvim.github_proxy or ""
+    if proxy_github ~= "" then
+      proxy_github = proxy_github .. "/"
+    end
+  end
 end
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://" .. proxy_github .. "github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
+
+local function clone_with_progress(repo_url, target_path)
+  print("Cloning " .. repo_url)
+  print("Target: " .. target_path)
+
+  local done = false
+  local success = false
+
+  vim.fn.jobstart({ "git", "clone", "--progress", repo_url, "--branch=stable", target_path }, {
+    on_stdout = function(_, data, _)
+      for _, line in ipairs(data) do
+        if line ~= "" then
+          print("git: " .. line)
+        end
+      end
+    end,
+    on_stderr = function(_, data, _)
+      for _, line in ipairs(data) do
+        if line ~= "" then
+          print("git: " .. line)
+        end
+      end
+    end,
+    on_exit = function(_, exit_code, _)
+      done = true
+      success = exit_code == 0
+    end
   })
+
+  -- 等待任务完成
+  while not done do
+    vim.wait(100, function() return done end)
+  end
+
+  return success
 end
-vim.opt.rtp:prepend(lazypath)
+
+
+
+local function setup_lazy()
+  local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+  -- 检查并安装
+  if not vim.loop.fs_stat(lazypath) then
+    local repo_url = "https://" .. proxy_github .. "github.com/folke/lazy.nvim.git"
+    if not vim.loop.fs_stat(lazypath) then
+      local success = clone_with_progress(repo_url, lazypath)
+      if not success then
+        print("ERROR: Git clone failed")
+        os.exit(1)
+      end
+    end
+  end
+
+  -- 验证安装
+  if vim.loop.fs_stat(lazypath) then
+    vim.opt.rtp:prepend(lazypath)
+    return true
+  else
+    vim.notify("lazy.nvim installation verification failed", vim.log.levels.ERROR)
+    return false
+  end
+end
+
+-- 执行安装
+local success = setup_lazy()
+if not success then
+  vim.notify("lazy.nvim setup failed, plugin management may not work", vim.log.levels.WARN)
+end
+
 
 -- search plugins: https://dotfyle.com/neovim/plugins/trending
 local function tabnine_build_path()
@@ -26,7 +88,9 @@ end
 
 -- plugin will install: ~/.local/share/nvim/lazy
 require("lazy").setup({
-  { "folke/lazy.nvim",             tag = "stable" },
+  { "folke/lazy.nvim",       tag = "stable" },
+  { "folke/tokyonight.nvim", lazy = not vim.startswith(all3nvim.colorscheme, "tokyonight") },
+  { "sainnhe/everforest",    lazy = not vim.startswith(all3nvim.colorscheme, "everforest") },
   {
     'goolord/alpha-nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
@@ -34,15 +98,15 @@ require("lazy").setup({
       require("plugins.plugin_alpha")
     end
   },
-  {
-    "DrKJeff16/project.nvim",
-    config = function()
-      require("project_nvim").setup {}
-    end
-  },
+  -- {
+  --   "DrKJeff16/project.nvim",
+  --   config = function()
+  --     require("project_nvim").setup {}
+  --   end
+  -- },
   { 'stevearc/dressing.nvim',      event = "VeryLazy",                                      config = true,                                opts = {},    dependencies = { "MunifTanjim/nui.nvim" } },
   { "nvim-tree/nvim-web-devicons", lazy = true },
-  { "nvim-lua/plenary.nvim",       cmd = { "PlenaryBustedFile", "PlenaryBustedDirectory" }, lazy = true },
+  { "nvim-lua/plenary.nvim",       cmd = { "PlenaryBustedFile", "PlenaryBustedDirectory" }, lazy = true }, -- 工具库 
   { "folke/neodev.nvim",           config = true },
   { "akinsho/bufferline.nvim",     version = "*",                                           dependencies = 'nvim-tree/nvim-web-devicons', config = true },
   -- https://github.com/folke/which-key.nvim
@@ -58,8 +122,6 @@ require("lazy").setup({
       require("plugins.plugin_which_key")
     end
   },
-  { "folke/tokyonight.nvim", lazy = not vim.startswith(all3nvim.colorscheme, "tokyonight") },
-  { "sainnhe/everforest",    lazy = not vim.startswith(all3nvim.colorscheme, "everforest") },
   -- https://github.com/nvim-tree/nvim-tree.lua
   {
     "nvim-tree/nvim-tree.lua",
@@ -87,8 +149,7 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     config = function()
       require("plugins.plugin_treesitter")
-    end,
-    tag = 'v0.9.2'
+    end
   },
   { "nvim-treesitter/nvim-treesitter-textobjects" },
   { "nvim-treesitter/nvim-treesitter-context",    config = true },
@@ -128,7 +189,7 @@ require("lazy").setup({
     event = { "InsertEnter", "CmdlineEnter" }
   },
   {
-    "williamboman/mason.nvim",
+    "williamboman/mason.nvim", -- package manager
     config = function()
       require("plugins.plugin_mason").setup()
     end
@@ -141,8 +202,8 @@ require("lazy").setup({
       require("plugins.plugin_lualine").setup()
     end
   },
-  { "folke/trouble.nvim",              config = true },
   -- debug
+  { "folke/trouble.nvim",              config = true },
   {
     "mfussenegger/nvim-dap",
     config = function()
@@ -151,7 +212,7 @@ require("lazy").setup({
   },
   { "theHamsta/nvim-dap-virtual-text", config = true },
   { "rcarriga/nvim-dap-ui",            dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
-  { "mfussenegger/nvim-dap-python",    ft = "python" },
+  { "mfussenegger/nvim-dap-python",    ft = "python",                                                      enabled = _G.all3nvim.plugins.python or false },
   {
     "Weissle/persistent-breakpoints.nvim",
     config = function()
@@ -243,6 +304,7 @@ require("lazy").setup({
   },
   {
     "p00f/clangd_extensions.nvim",
+    enabled = _G.all3nvim.plugins.cpp or false,
     ft = { "c", "c++", "cpp", "cuda" },
     lazy = true,
     config = function()
@@ -269,6 +331,7 @@ require("lazy").setup({
   {
     'chipsenkbeil/distant.nvim',
     branch = 'v0.3',
+    enabled = _G.all3nvim.plugins.distant or false,
     config = function()
       require('distant'):setup()
     end
@@ -276,17 +339,20 @@ require("lazy").setup({
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    enabled = _G.all3nvim.plugins.markdown or false,
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
+  --{
+  --  'stevearc/overseer.nvim',
+  --  config = function()
+  --    require('plugins.plugin_overseer').setup()
+  --  end
+  --},
   {
-    'stevearc/overseer.nvim',
-    config = function()
-      require('plugins.plugin_overseer').setup()
-    end
-  },
-  {
+    -- Interactive Repl Over Neovim
     'Vigemus/iron.nvim',
+    enabled = _G.all3nvim.plugins.python or false,
     config = function()
       require("plugins.plugin_iron").setup()
     end
@@ -345,6 +411,7 @@ require("lazy").setup({
   {
     -- for golang
     "ray-x/go.nvim",
+    enabled = _G.all3nvim.plugins.gopls,
     dependencies = { -- optional packages
       "ray-x/guihua.lua",
       "neovim/nvim-lspconfig",
@@ -355,7 +422,8 @@ require("lazy").setup({
     end,
     event = { "CmdlineEnter" },
     ft = { "go", 'gomod' },
-    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+    build = ':lua require("go.install").update_all_sync()'
+    -- if you need to install/update all binaries
   },
   {
     "MysticalDevil/inlay-hints.nvim",

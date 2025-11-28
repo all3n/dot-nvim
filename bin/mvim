@@ -1,0 +1,32 @@
+#!/bin/bash
+
+export VIM_HOME=/home/jovyan/dot-nvim
+# 加载初始化脚本
+source "$VIM_HOME/bin/init.sh"
+
+# 设置默认的 NVIM 二进制路径
+: ${NVIM_BIN:=/usr/local/nvim-linux-x86_64/bin/nvim}
+
+export NVIM_DATA_HOME=$VIM_HOME/nvim-data
+export XDG_CONFIG_HOME=$NVIM_DATA_HOME/config
+export XDG_STATE_HOME=$NVIM_DATA_HOME/state
+export XDG_DATA_HOME=$NVIM_DATA_HOME/share
+export XDG_CACHE_HOME=$NVIM_DATA_HOME/cache
+export XDG_RUNTIME_HOME=$NVIM_DATA_HOME/runtime
+
+
+# 检查 NVIM_BIN 是否存在
+if [ ! -f "$NVIM_BIN" ]; then
+    echo "错误: 未找到 Neovim 可执行文件: $NVIM_BIN" >&2
+    echo "请设置正确的 NVIM_BIN 环境变量" >&2
+    exit 1
+fi
+
+# 检查配置文件是否存在
+if [ ! -f "$VIM_HOME/init.lua" ]; then
+    echo "错误: 未找到配置文件: $VIM_HOME/init.lua" >&2
+    exit 1
+fi
+
+# 启动 Neovim
+"$NVIM_BIN" -u $XDG_CONFIG_HOME/nvim/init.lua $@

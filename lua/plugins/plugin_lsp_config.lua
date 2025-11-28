@@ -172,7 +172,7 @@ if _G.all3nvim.plugins.yamlls then
   }
 end
 
-if _G.all3nvim.plugins.pyright then
+if _G.all3nvim.plugins.python then
   -- https://github.com/astral-sh/ruff-lsp/issues/384
   -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#pyright
   -- disable pyright analysis check and use ruff
@@ -208,7 +208,7 @@ if _G.all3nvim.plugins.pyright then
     }
   })
 end
-if _G.all3nvim.plugins.rust_analyzer then
+if _G.all3nvim.plugins.rust then
   lspconfig.rust_analyzer.setup {
     capabilities = capabilities,
     settings = {
@@ -217,7 +217,7 @@ if _G.all3nvim.plugins.rust_analyzer then
   }
 end
 
-if _G.all3nvim.plugins.clangd then
+if _G.all3nvim.plugins.cpp then
   -- https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/clangd.lua
   local clangd_cmd = { "clangd", "--enable-config", "--clang-tidy", "--header-insertion=never",
     "--offset-encoding=utf-16" }
@@ -243,12 +243,12 @@ if _G.all3nvim.plugins.clangd then
 
   }
 end
-if _G.all3nvim.plugins.bashls then
+if _G.all3nvim.plugins.bash then
   lspconfig.bashls.setup {
     capabilities = capabilities,
   }
 end
-if _G.all3nvim.plugins.marksman then
+if _G.all3nvim.plugins.markdown then
   lspconfig.marksman.setup {
     capabilities = capabilities,
   }

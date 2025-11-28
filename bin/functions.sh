@@ -1,5 +1,3 @@
-: ${NVIM_BIN:=nvim}
-
 function get_os(){
     if [[ "$(uname)" == "Darwin" ]];then
         echo "MAC"
